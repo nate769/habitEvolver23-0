@@ -1,4 +1,4 @@
-// src/components/RewardShop.jsx
+
 import { useState, useEffect } from 'react';
 import './RewardShop.css';
 

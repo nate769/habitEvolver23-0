@@ -1,10 +1,10 @@
-/* src/components/GoalBox.css */
+
 .goal-box {
-    background: linear-gradient(135deg, #00FFFF, #FF69B4); /* Cyan to Magenta */
-    color: #333; /* Adjust text color for contrast if needed */
+    background: linear-gradient(135deg, #00FFFF, #FF69B4); 
+    color: #333; 
     padding: 1.5rem;
     border-radius: 15px;
-    box-shadow: 0 6px 20px rgba(0, 255, 255, 0.3); /* Adjust shadow color */
+    box-shadow: 0 6px 20px rgba(0, 255, 255, 0.3); 
     border: 2px solid #e74c3c;
     animation: fadeIn 0.5s ease-in;
   }
@@ -12,8 +12,8 @@
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    color: #FF8C00; /* Brighter orange */
-    text-shadow: 0 0 5px rgba(255, 140, 0, 0.7); /* Adjust shadow accordingly */
+    color: #FF8C00; 
+    text-shadow: 0 0 5px rgba(255, 140, 0, 0.7);
   }
   
   .goal-box__list {

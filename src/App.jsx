@@ -20,7 +20,7 @@ function App() {
   ]);
 
   useEffect(() => {
-    // Check for authToken first, then isLoggedIn
+  
     const token = localStorage.getItem('authToken');
     const storedIsLoggedIn = localStorage.getItem('isLoggedIn');
 
@@ -39,25 +39,25 @@ function App() {
   useEffect(() => {
     localStorage.setItem('dailyPoints', dailyPoints);
     localStorage.setItem('goals', JSON.stringify(goals));
-    localStorage.setItem('isLoggedIn', isLoggedIn); // Ensure isLoggedIn is saved
+    localStorage.setItem('isLoggedIn', isLoggedIn);
   }, [dailyPoints, goals, isLoggedIn]);
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
     setShowSignup(false);
-    localStorage.setItem('authToken', 'somefaketoken'); // Simulate saving a token
+    localStorage.setItem('authToken', 'somefaketoken'); 
   };
 
   const handleSignupSuccess = () => {
     setIsLoggedIn(true);
     setShowSignup(false);
-    localStorage.setItem('authToken', 'anotherfaketoken'); // Simulate saving a token
+    localStorage.setItem('authToken', 'anotherfaketoken'); 
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     localStorage.removeItem('authToken');
-    localStorage.removeItem('isLoggedIn'); // Clear isLoggedIn on logout
+    localStorage.removeItem('isLoggedIn'); 
   };
 
   const toggleSignup = () => {

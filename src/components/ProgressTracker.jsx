@@ -1,4 +1,4 @@
-// src/components/ProgressTracker.jsx
+
 import { useState, useEffect } from 'react';
 import './ProgressTracker.css';
 
