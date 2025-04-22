@@ -1,3 +1,84 @@
+.main-content {
+  flex-direction: column; /* Stack elements vertically */
+  justify-content: flex-start; /* Align items to the top */
+  align-items: flex-start; /* Align items to the left */
+  padding: 2rem;
+  position: relative;
+  z-index: 10;
+}
+
+.main-content h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: bold;
+  text-decoration: underline;
+  text-underline-offset: 8px;
+  color: #e67e22;
+  text-shadow: 0 0 10px rgba(230, 126, 34, 0.5);
+  background: linear-gradient(45deg, #e74c3c, #e67e22);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 2rem;
+  text-align: center; /* Center the heading */
+  width: 100%; /* Make heading take full width */
+}
+
+.main-content > aside {
+  display: flex; /* Keep flex for potential side-by-side elements */
+  flex-wrap: wrap; /* Allow wrapping */
+  gap: 1.5rem; /* Space between GoalBox and ProgressTracker */
+  margin-bottom: 1.5rem; /* Add some space below */
+  align-items: flex-start; /* Align items to the start (top) */
+}
+
+#goal-box-container {
+  /* Apply GoalBox styles */
+  background: linear-gradient(135deg, #00FFFF, #FF69B4);
+  color: #333;
+  padding: 1.5rem;
+  border-radius: 15px;
+  box-shadow: 0 6px 20px rgba(0, 255, 255, 0.3);
+  border: 2px solid #e74c3c;
+  animation: fadeIn 0.5s ease-in;
+  /* Adjust width if needed */
+  /* width: 300px; */
+}
+
+#progress-tracker-container {
+  flex: 1; /* Take remaining space */
+  min-width: 300px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(142, 68, 173, 0.3);
+}
+
+#reward-shop-container {
+  width: 100%; /* Take full width below ProgressTracker */
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(142, 68, 173, 0.3);
+  margin-bottom: 1.5rem;
+}
+
+.sidebar {
+  display: none; /* Hide the original sidebar */
+}
+
+#background-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
 
 .app-container {
   display: flex;
@@ -7,10 +88,32 @@
   overflow: hidden;
   font-family: 'Arial', sans-serif;
   color: #2c3e50;
-  background-color: #FFFFE0; 
+  background-color: #FFFFE0;
+  
+  background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%,
+                          transparent 50%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0.05) 75%,
+                          transparent 75%, transparent);
+  background-size: 20px 20px;
 }
 
 
+.app-container::before {
+  content: "Do it 1% better everyday focus on the progress rather than the outcomes";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem; /* Adjust as needed */
+  color: rgba(0, 0, 0, 0.1); /* Adjust color and opacity */
+  white-space: pre-wrap;
+  text-align: center;
+  z-index: 0; /* Ensure it's behind other content */
+  pointer-events: none; /* Make sure it doesn't interfere with interactions */
+}
 
 .header {
   display: flex;
@@ -36,7 +139,8 @@
   gap: 1rem;
 }
 
-.streak, .points {
+.streak,
+.points {
   background: #fff;
   color: #2c3e50;
   padding: 0.5rem 1rem;
@@ -47,7 +151,8 @@
   transition: transform 0.3s ease;
 }
 
-.streak:hover, .points:hover {
+.streak:hover,
+.points:hover {
   transform: scale(1.05);
 }
 
@@ -97,6 +202,7 @@
   height: 100%;
   z-index: 1;
 }
+
 @media (max-width: 767px) {
   .header {
     flex-direction: column;
@@ -118,7 +224,7 @@
   .main-content {
     flex-direction: column;
     padding: 1rem;
-    align-items: center; 
+    align-items: center;
   }
 
   .sidebar {
@@ -133,7 +239,7 @@
     margin-bottom: 1rem;
   }
 
-  .main-content > div { 
+  .main-content > div {
     width: 100%;
     align-items: center;
   }
@@ -144,7 +250,6 @@
     margin: 1rem auto;
   }
 }
-
 
 @media (min-width: 768px) and (max-width: 1023px) {
   .main-content {

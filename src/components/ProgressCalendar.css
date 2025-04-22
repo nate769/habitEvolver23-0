@@ -1,0 +1,44 @@
+.calendar-container {
+    max-width: 400px;
+    margin: 0 auto;
+    background: #fefefe;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+ 
+  .react-calendar__tile {
+    position: relative;
+    padding: 0.75rem 0;
+    font-weight: 500;
+    transition: background 0.3s;
+  }
+  
+  /* Marked X for missed days */
+  .mark-x::after {
+    content: '❌';
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.1rem;
+    color: #e74c3c;
+  }
+  
+  /* Marked check for completed days */
+  .mark-check::after {
+    content: '✅';
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.1rem;
+    color: #2ecc71;
+  }
+  
+  /* Hover effect */
+  .react-calendar__tile:hover {
+    background-color: #ecf0f1;
+    border-radius: 8px;
+  }
+  
