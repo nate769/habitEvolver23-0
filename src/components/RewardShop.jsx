@@ -1,5 +1,5 @@
-
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import './RewardShop.css';
 
 function RewardShop({ dailyPoints, setDailyPoints }) {
@@ -20,16 +20,18 @@ function RewardShop({ dailyPoints, setDailyPoints }) {
   };
 
   return (
-    <div className="reward-shop">
+    <div className="reward-shop" role="region" aria-label="Reward Shop">
       <h3>Reward Shop</h3>
-      <ul className="reward-list">
+      <ul className="reward-list" role="list">
         {items.map((item, i) => (
-          <li key={i} className="reward-item">
-            <span>{item.name} - {item.cost} Points</span>
+          <li key={i} className="reward-item" role="listitem">
+            <span id={`item-${i}-description`}>{item.name} - {item.cost} Points</span>
             <button
               onClick={() => handlePurchase(i)}
               disabled={dailyPoints < item.cost || item.purchased}
               className="reward-btn"
+              aria-describedby={`item-${i}-description`}
+              aria-disabled={dailyPoints < item.cost || item.purchased}
             >
               {item.purchased ? 'Purchased' : 'Buy'}
             </button>
@@ -39,5 +41,10 @@ function RewardShop({ dailyPoints, setDailyPoints }) {
     </div>
   );
 }
+
+RewardShop.propTypes = {
+  dailyPoints: PropTypes.number.isRequired,
+  setDailyPoints: PropTypes.func.isRequired
+};
 
 export default RewardShop;

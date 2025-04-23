@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './App.css';
 import logo from './assets/Habitevolve.png';
 import GoalBox from './components/GoalBox';
 import ProgressTracker from './components/ProgressTracker';
 import RewardShop from './components/RewardShop';
 import Notifications from './components/Notifications';
-import Login from './components/Login';
+import Login from './components/login';
 import Signup from './components/Signup';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import CalendarPage from './components/CalendarPage'; 
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
+import CalendarPage from './components/CalendarPage';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [showSignup, setShowSignup] = useState(false);
   const [streak, setStreak] = useState(0);
   const [dailyPoints, setDailyPoints] = useState(0);
   const [goals, setGoals] = useState([
@@ -81,13 +80,11 @@ function App() {
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
-    setShowSignup(false);
     localStorage.setItem('authToken', 'somefaketoken');
   };
 
   const handleSignupSuccess = () => {
     setIsLoggedIn(true);
-    setShowSignup(false);
     localStorage.setItem('authToken', 'anotherfaketoken');
   };
 
@@ -97,11 +94,7 @@ function App() {
     localStorage.removeItem('isLoggedIn');
   };
 
-  const toggleSignup = () => {
-    setShowSignup(!showSignup);
-  };
-
-  const markTodayAsCompleted = () => {
+  const markTodayAsCompleted = useCallback(() => {
     const today = new Date().toDateString();
     const allCompleted = goals.every(goal => goal.completed);
 
@@ -113,30 +106,36 @@ function App() {
       }
       return prev;
     });
-  };
+  }, [goals]);
 
   useEffect(() => {
-    markTodayAsCompleted();
-  }, [goals]);
+    if (goals.some(goal => goal.completed)) {
+      markTodayAsCompleted();
+    }
+  }, [goals, markTodayAsCompleted]);
 
   return (
     <Router>
       <div className="app-container">
-        <header className="header">
+        <header className="header" role="banner">
           <img src={logo} className="logo" alt="HabitEvolve Logo" />
           {isLoggedIn ? (
-            <div className="top-right-stats">
-              <div className="streak">🔥 {streak} Day Streak</div>
-              <div className="points">💰 {dailyPoints} Points</div>
+            <div className="top-right-stats" role="navigation" aria-label="User navigation">
+              <div className="streak" aria-live="polite">🔥 {streak} Day Streak</div>
+              <div className="points" aria-live="polite">💰 {dailyPoints} Points</div>
               <Link to="/calendar">
-                <button style={{ marginRight: '1rem' }}>📅 Calendar</button>
+                <button style={{ marginRight: '1rem' }} aria-label="View Calendar">📅 Calendar</button>
               </Link>
-              <button onClick={handleLogout}>Logout</button>
+              <button onClick={handleLogout} aria-label="Log out">Logout</button>
             </div>
           ) : (
-            <div>
-              <button onClick={() => setShowSignup(false)}>Login</button>
-              <button onClick={toggleSignup}>Sign Up</button>
+            <div role="navigation" aria-label="Authentication">
+              <Link to="/login">
+                <button aria-label="Go to login">Login</button>
+              </Link>
+              <Link to="/signup">
+                <button aria-label="Go to signup">Sign Up</button>
+              </Link>
             </div>
           )}
         </header>
@@ -155,10 +154,28 @@ function App() {
                   </aside>
                   <Notifications goals={goals} />
                 </div>
-              ) : showSignup ? (
-                <Signup onSignupSuccess={handleSignupSuccess} />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              isLoggedIn ? (
+                <Navigate to="/" replace />
               ) : (
                 <Login onLoginSuccess={handleLoginSuccess} />
+              )
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              isLoggedIn ? (
+                <Navigate to="/" replace />
+              ) : (
+                <Signup onSignupSuccess={handleSignupSuccess} />
               )
             }
           />

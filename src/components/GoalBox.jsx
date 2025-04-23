@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import './GoalBox.css';
 import AlarmFeature from './AlarmFeature';
 
@@ -6,14 +7,32 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
   const [newGoal, setNewGoal] = useState('');
   const [newDate, setNewDate] = useState('');
   const [newTime, setNewTime] = useState('09:00');
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    const savedGoals = localStorage.getItem('goals');
-    if (savedGoals) setGoals(JSON.parse(savedGoals));
+    try {
+      const savedGoals = localStorage.getItem('goals');
+      if (savedGoals) {
+        const parsedGoals = JSON.parse(savedGoals);
+        if (Array.isArray(parsedGoals)) {
+          setGoals(parsedGoals);
+        } else {
+          throw new Error('Saved goals is not an array');
+        }
+      }
+    } catch (error) {
+      setError('Error loading goals: ' + error.message);
+      console.error('Error loading goals from localStorage:', error);
+    }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('goals', JSON.stringify(goals));
+    try {
+      localStorage.setItem('goals', JSON.stringify(goals));
+    } catch (error) {
+      setError('Error saving goals: ' + error.message);
+      console.error('Error saving goals to localStorage:', error);
+    }
   }, [goals]);
 
   const formatDateForStorage = (date) => {
@@ -75,6 +94,7 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
   return (
     <div className="goal-box">
       <h2 className="goal-box__heading">Your Goals</h2>
+      {error && <div className="error">{error}</div>}
       <ul className="goal-box__list">
         {goals.map((goal, i) => (
           <li key={i} className="goal-box__item">
@@ -134,5 +154,18 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
     </div>
   );
 }
+
+GoalBox.propTypes = {
+  setDailyPoints: PropTypes.func.isRequired,
+  goals: PropTypes.arrayOf(PropTypes.shape({
+    text: PropTypes.string.isRequired,
+    date: PropTypes.string,
+    time: PropTypes.string,
+    completed: PropTypes.bool.isRequired,
+    taskStreak: PropTypes.number.isRequired,
+    lastCompleted: PropTypes.string
+  })).isRequired,
+  setGoals: PropTypes.func.isRequired
+};
 
 export default GoalBox;

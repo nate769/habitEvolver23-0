@@ -1,5 +1,5 @@
-
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import './ProgressTracker.css';
 
 function ProgressTracker({ goals }) {
@@ -21,5 +21,12 @@ function ProgressTracker({ goals }) {
     </div>
   );
 }
+
+ProgressTracker.propTypes = {
+  goals: PropTypes.arrayOf(PropTypes.shape({
+    text: PropTypes.string.isRequired,
+    completed: PropTypes.bool.isRequired
+  })).isRequired
+};
 
 export default ProgressTracker;

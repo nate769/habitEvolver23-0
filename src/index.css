@@ -1,11 +1,41 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* Organic Color Palette */
+  --color-primary: #2ecc71;
+  --color-primary-dark: #27ae60;
+  --color-secondary: #3498db;
+  --color-secondary-dark: #2980b9;
+  --color-accent: #e67e22;
+  --color-accent-dark: #d35400;
+  --color-success: #2ecc71;
+  --color-warning: #f1c40f;
+  --color-danger: #e74c3c;
+  --color-background: #f0f9ff;
+  --color-text: #2c3e50;
+  --color-text-light: #ecf0f1;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 350ms ease;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: light;
+  color: var(--color-text);
+  background-color: var(--color-background);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -46,6 +76,17 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
+/* Remove button styles from inputs */
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  background: none;
+  padding: initial;
+  color: inherit;
+  cursor: text;
+}
+
 button:hover {
   border-color: #646cff;
 }

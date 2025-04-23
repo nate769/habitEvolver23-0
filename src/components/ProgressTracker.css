@@ -1,42 +1,111 @@
-
 .progress-tracker {
-    background: linear-gradient(135deg, #3498db, #8e44ad);
-    color: #fff;
-    padding: 1.5rem;
-    border-radius: 15px;
-    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
-    border: 2px solid #e74c3c;
-    animation: fadeIn 0.5s ease-in;
+  background: linear-gradient(135deg,
+    rgba(52, 152, 219, 0.1),
+    rgba(142, 68, 173, 0.1)
+  );
+  color: var(--color-text);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  animation: slideIn var(--transition-normal);
+}
+
+.progress-tracker h3 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--color-text);
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.progress-tracker h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-secondary), var(--color-secondary-dark));
+  border-radius: var(--radius-full);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 1.5rem;
+  background: rgba(44, 62, 80, 0.1);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: 1rem;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    var(--color-primary),
+    var(--color-primary-dark)
+  );
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: var(--radius-full);
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: shine 2s infinite;
+}
+
+.progress-tracker p {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--color-text);
+  font-weight: 600;
+  margin: 0;
+  animation: fadeIn var(--transition-normal);
+}
+
+@keyframes shine {
+  from {
+    transform: translateX(-100%);
   }
-  
-  .progress-tracker h3 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: #e67e22;
-    text-shadow: 0 0 5px rgba(230, 126, 34, 0.7);
+  to {
+    transform: translateX(100%);
   }
-  
-  .progress-bar {
-    width: 100%;
-    height: 1.5rem;
-    background: #2c3e50;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 0.5rem;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
   }
-  
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(45deg, #2ecc71, #27ae60);
-    transition: width 0.5s ease;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(46, 204, 113, 0.3);
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
-  
-  .progress-tracker p {
-    text-align: center;
-    font-size: 1.1rem;
-    color: #ecf0f1;
-    font-weight: 600;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
+  to {
+    opacity: 1;
+  }
+}
