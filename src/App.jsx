@@ -7,8 +7,10 @@ import RewardShop from './components/RewardShop';
 import Notifications from './components/Notifications';
 import Login from './components/Login';
 import Signup from './components/Signup';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import CalendarPage from './components/CalendarPage'; 
+import Notes from './components/Notes';
+import WelcomePage from './components/WelcomePage';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
+import CalendarPage from './components/CalendarPage';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -32,34 +34,36 @@ function App() {
     }
   });
 
+  const [isFirstTimeUser, setIsFirstTimeUser] = useState(() => {
+    return !localStorage.getItem('hasVisited');
+  });
+
   useEffect(() => {
     try {
       const token = localStorage.getItem('authToken');
-      const storedIsLoggedIn = localStorage.getItem('isLoggedIn');
-      if (token || storedIsLoggedIn === 'true') {
+      const storedUserData = localStorage.getItem('userData');
+      if (token && storedUserData) {
         setIsLoggedIn(true);
+        const userData = JSON.parse(storedUserData);
+        setDailyPoints(userData.points || 0);
+        setStreak(userData.streak || 0);
+        setGoals(userData.goals || []);
       }
-
-      const savedPoints = localStorage.getItem('dailyPoints');
-      if (savedPoints) setDailyPoints(parseInt(savedPoints, 10));
-
-      const savedGoals = localStorage.getItem('goals');
-      if (savedGoals) setGoals(JSON.parse(savedGoals));
     } catch (error) {
-      console.error('Error loading from localStorage:', error);
+      console.error('Error loading user data:', error);
     }
   }, []);
 
   useEffect(() => {
-    try {
-      localStorage.setItem('dailyPoints', dailyPoints.toString());
-      localStorage.setItem('goals', JSON.stringify(goals));
-      localStorage.setItem('isLoggedIn', isLoggedIn.toString());
-      localStorage.setItem('completedDates', JSON.stringify(completedDates));
-    } catch (error) {
-      console.error('Error saving to localStorage:', error);
+    if (isLoggedIn) {
+      const userData = {
+        points: dailyPoints,
+        streak: streak,
+        goals: goals,
+      };
+      localStorage.setItem('userData', JSON.stringify(userData));
     }
-  }, [dailyPoints, goals, isLoggedIn, completedDates]);
+  }, [isLoggedIn, dailyPoints, streak, goals]);
 
   useEffect(() => {
     const calculateStreak = () => {
@@ -79,6 +83,24 @@ function App() {
     setStreak(calculateStreak());
   }, [completedDates]);
 
+  useEffect(() => {
+    if (isFirstTimeUser && isLoggedIn) {
+      setDailyPoints(prev => prev + 100);
+      localStorage.setItem('hasVisited', 'true');
+      setIsFirstTimeUser(false);
+      
+      const notification = document.createElement('div');
+      notification.className = 'welcome-bonus';
+      notification.textContent = '🎉 Welcome Bonus: +100 Points!';
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.classList.add('fade-out');
+        setTimeout(() => document.body.removeChild(notification), 500);
+      }, 3000);
+    }
+  }, [isLoggedIn, isFirstTimeUser]);
+
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
     setShowSignup(false);
@@ -94,7 +116,11 @@ function App() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     localStorage.removeItem('authToken');
+    localStorage.removeItem('userData');
     localStorage.removeItem('isLoggedIn');
+    setDailyPoints(0);
+    setStreak(0);
+    setGoals([]);
   };
 
   const toggleSignup = () => {
@@ -128,13 +154,12 @@ function App() {
             <div className="top-right-stats">
               <div className="streak">🔥 {streak} Day Streak</div>
               <div className="points">💰 {dailyPoints} Points</div>
-              <Link to="/calendar">
-                <button style={{ marginRight: '1rem' }}>📅 Calendar</button>
-              </Link>
-              <button onClick={handleLogout}>Logout</button>
+              <Link to="/calendar" className="nav-link">📅 Calendar</Link>
+              <Link to="/notes" className="nav-link">📝 Notes</Link>
+              <button onClick={handleLogout} className="logout-btn">Logout</button>
             </div>
           ) : (
-            <div>
+            <div className="auth-buttons">
               <button onClick={() => setShowSignup(false)}>Login</button>
               <button onClick={toggleSignup}>Sign Up</button>
             </div>
@@ -145,27 +170,42 @@ function App() {
           <Route
             path="/"
             element={
-              isLoggedIn ? (
+              !isLoggedIn ? (
+                <WelcomePage />
+              ) : (
                 <div className="main-content logged-in">
                   <h1>Make Your Dreams A Reality One Day At A Time</h1>
-                  <aside className="sidebar">
-                    <GoalBox setDailyPoints={setDailyPoints} goals={goals} setGoals={setGoals} />
-                    <ProgressTracker goals={goals} />
-                    <RewardShop dailyPoints={dailyPoints} setDailyPoints={setDailyPoints} />
-                  </aside>
+                  <div className="main-content__grid">
+                    <div className="main-content__left">
+                      <GoalBox setDailyPoints={setDailyPoints} goals={goals} setGoals={setGoals} />
+                    </div>
+                    <div className="main-content__right">
+                      <ProgressTracker goals={goals} />
+                      <RewardShop dailyPoints={dailyPoints} setDailyPoints={setDailyPoints} />
+                    </div>
+                  </div>
                   <Notifications goals={goals} />
                 </div>
-              ) : showSignup ? (
-                <Signup onSignupSuccess={handleSignupSuccess} />
-              ) : (
-                <Login onLoginSuccess={handleLoginSuccess} />
               )
             }
           />
-          <Route path="/calendar" element={<CalendarPage completedDates={completedDates} />} />
+          <Route 
+            path="/login" 
+            element={isLoggedIn ? <Navigate to="/" /> : <Login onLoginSuccess={handleLoginSuccess} />} 
+          />
+          <Route 
+            path="/signup" 
+            element={isLoggedIn ? <Navigate to="/" /> : <Signup onSignupSuccess={handleSignupSuccess} />} 
+          />
+          <Route 
+            path="/calendar" 
+            element={isLoggedIn ? <CalendarPage completedDates={completedDates} /> : <Navigate to="/" />} 
+          />
+          <Route 
+            path="/notes" 
+            element={isLoggedIn ? <Notes /> : <Navigate to="/" />} 
+          />
         </Routes>
-
-        {/* <canvas id="background-canvas" aria-hidden="true"></canvas> */}
       </div>
     </Router>
   );

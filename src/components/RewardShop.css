@@ -1,61 +1,187 @@
-
 .reward-shop {
-    background: linear-gradient(135deg, #3498db, #8e44ad);
-    color: #fff;
+    background: #ffffff;
+    color: #2c3e50;
     padding: 1.5rem;
     border-radius: 15px;
-    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
-    border: 2px solid #e74c3c;
-    animation: fadeIn 0.5s ease-in;
-  }
-  
-  .reward-shop h3 {
-    font-size: 1.5rem;
-    font-weight: 700;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.reward-shop h3 {
+    text-align: center;
+    font-size: 1.8rem;
     margin-bottom: 1rem;
-    color: #e67e22;
-    text-shadow: 0 0 5px rgba(230, 126, 34, 0.7);
-  }
-  
-  .reward-list {
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.reward-points {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #B8860B;
+    margin-bottom: 1.5rem;
+    padding: 0.5rem;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 8px;
+}
+
+.unlocked-stickers {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.05) 0%, rgba(255, 165, 0, 0.05) 100%);
+    border-radius: 12px;
+    border: 2px dashed #FFD700;
+}
+
+.unlocked-stickers h4 {
+    text-align: center;
+    color: #B8860B;
+    margin-bottom: 1rem;
+}
+
+.sticker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.sticker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    padding: 0.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.sticker:hover {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.reward-list {
     list-style: none;
     padding: 0;
     margin: 0;
-  }
-  
-  .reward-item {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.reward-item {
+    background: #fff;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 10px;
+    padding: 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem;
-    margin-bottom: 0.75rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
     transition: all 0.3s ease;
-  }
-  
-  .reward-item:hover {
+}
+
+.reward-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  }
-  
-  .reward-btn {
+}
+
+.reward-item.sticker {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.05) 0%, rgba(255, 165, 0, 0.05) 100%);
+}
+
+.reward-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.reward-name {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.reward-cost {
+    font-size: 0.9rem;
+    color: #B8860B;
+}
+
+.reward-btn {
     padding: 0.5rem 1rem;
-    background: linear-gradient(45deg, #2ecc71, #27ae60);
+    background: linear-gradient(45deg, #FFD700, #FFA500);
     color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 1rem;
-    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
-    transition: transform 0.3s ease;
-  }
-  
-  .reward-btn:disabled {
-    background: #7f8c8d;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    min-width: 80px;
+}
+
+.reward-btn:not(:disabled):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.reward-btn:disabled {
+    background: #e0e0e0;
     cursor: not-allowed;
-  }
-  
-  .reward-btn:hover:not(:disabled) {
-    transform: scale(1.05);
-  }
+    color: #7f8c8d;
+}
+
+.reward-btn.purchased {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+}
+
+.reward-notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    z-index: 1000;
+    animation: slideDown 0.5s ease-out;
+}
+
+.reward-notification.fade-out {
+    animation: fadeOut 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+    from { transform: translate(-50%, -100%); opacity: 0; }
+    to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@media (max-width: 768px) {
+    .reward-shop {
+        margin: 1rem;
+        padding: 1rem;
+    }
+
+    .sticker-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    }
+
+    .reward-list {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './GoalBox.css';
 import AlarmFeature from './AlarmFeature';
 
 function GoalBox({ setDailyPoints, goals, setGoals }) {
   const [newGoal, setNewGoal] = useState('');
   const [newDate, setNewDate] = useState('');
-  const [newTime, setNewTime] = useState('09:00');
+  const [newTime, setNewTime] = useState('');
 
   useEffect(() => {
     const savedGoals = localStorage.getItem('goals');
@@ -29,80 +29,79 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
   };
 
   const handleAdd = () => {
-    const trimmed = newGoal.trim();
-    if (!trimmed) return;
-    const formattedDate = formatDateForStorage(newDate);
-    setGoals([...goals, { text: trimmed, date: formattedDate, time: newTime, completed: false, taskStreak: 0, lastCompleted: '' }]);
-    setNewGoal('');
-    setNewDate('');
-    setNewTime('09:00');
+    if (newGoal.trim()) {
+      const newGoalObj = {
+        text: newGoal,
+        date: newDate,
+        time: newTime,
+        completed: false,
+        taskStreak: 0,
+        position: 'right'
+      };
+      setGoals([...goals, newGoalObj]);
+      setNewGoal('');
+      setNewDate('');
+      setNewTime('');
+    }
   };
 
-  const handleRemove = (index) => {
-    setGoals(goals.filter((_, i) => i !== index));
+  const handleToggle = (index) => {
+    const updatedGoals = [...goals];
+    const goal = updatedGoals[index];
+    
+    goal.completed = !goal.completed;
+    
+    if (goal.completed) {
+      goal.position = 'left';
+      setDailyPoints(prev => prev + 10);
+      goal.taskStreak += 1;
+    } else {
+      goal.position = 'right';
+      setDailyPoints(prev => Math.max(0, prev - 10));
+      goal.taskStreak = Math.max(0, goal.taskStreak - 1);
+    }
+    
+    setGoals(updatedGoals);
   };
 
-  const handleDateChange = (index, value) => {
-    const formattedDate = formatDateForStorage(value);
-    setGoals(goals.map((g, i) => (i === index ? { ...g, date: formattedDate } : g)));
-  };
-
-  const handleTimeChange = (index, value) => {
-    setGoals(goals.map((g, i) => (i === index ? { ...g, time: value } : g)));
-  };
-
-  const handleToggleComplete = (index) => {
-    const today = new Date().toISOString().split('T')[0];
-    setGoals((prevGoals) => {
-      const updatedGoals = [...prevGoals];
-      const goal = updatedGoals[index];
-      const isCompletedToday = goal.completed && goal.lastCompleted === today;
-      if (!isCompletedToday) {
-        goal.completed = !goal.completed;
-        if (goal.completed) {
-          goal.lastCompleted = today;
-          goal.taskStreak += 1;
-          setDailyPoints((prev) => prev + 10);
-        } else {
-          goal.taskStreak = 0;
-          setDailyPoints((prev) => Math.max(0, prev - 10));
-        }
-      }
-      return updatedGoals;
-    });
+  const handleDelete = (index) => {
+    const updatedGoals = goals.filter((_, i) => i !== index);
+    setGoals(updatedGoals);
   };
 
   return (
     <div className="goal-box">
-      <h2 className="goal-box__heading">Your Goals</h2>
+      <h3 className="goal-box__heading">Your Goals</h3>
       <ul className="goal-box__list">
-        {goals.map((goal, i) => (
-          <li key={i} className="goal-box__item">
-            <span className="goal-box__text">
+        {goals.map((goal, index) => (
+          <li 
+            key={index} 
+            className={`goal-box__item ${goal.completed ? 'completed' : ''} ${goal.position}`}
+          >
+            <div className="goal-box__text">
               <input
                 type="checkbox"
                 checked={goal.completed}
-                onChange={() => handleToggleComplete(i)}
+                onChange={() => handleToggle(index)}
+                className="goal-box__checkbox"
               />
-              {goal.text}
-            </span>
-            <input
-              type="date"
-              value={formatDateForInput(goal.date)}
-              onChange={(e) => handleDateChange(i, e.target.value)}
-              className="goal-box__date"
-            />
-            <input
-              type="time"
-              value={goal.time || '09:00'}
-              onChange={(e) => handleTimeChange(i, e.target.value)}
-              className="goal-box__time"
-            />
-            <div className="task-streak">🔥 {goal.taskStreak}</div>
-            <button className="goal-box__remove" onClick={() => handleRemove(i)}>
+              <span>{goal.text}</span>
+            </div>
+            {goal.date && (
+              <div className="goal-box__datetime">
+                <span className="goal-box__date">{goal.date}</span>
+                {goal.time && <span className="goal-box__time">{goal.time}</span>}
+              </div>
+            )}
+            <div className="goal-box__streak">
+              <span className="task-streak">🔥 {goal.taskStreak}</span>
+            </div>
+            <button 
+              onClick={() => handleDelete(index)}
+              className="goal-box__delete-btn"
+            >
               ×
             </button>
-            <AlarmFeature task={{ text: goal.text, date: goal.date, time: goal.time || '09:00' }} />
           </li>
         ))}
       </ul>
@@ -115,20 +114,22 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
           className="goal-box__input"
           placeholder="Add new goal..."
         />
-        <input
-          type="date"
-          value={newDate}
-          onChange={(e) => setNewDate(e.target.value)}
-          className="goal-box__date"
-        />
-        <input
-          type="time"
-          value={newTime}
-          onChange={(e) => setNewTime(e.target.value)}
-          className="goal-box__time"
-        />
+        <div className="goal-box__datetime-inputs">
+          <input
+            type="date"
+            value={newDate}
+            onChange={(e) => setNewDate(e.target.value)}
+            className="goal-box__date"
+          />
+          <input
+            type="time"
+            value={newTime}
+            onChange={(e) => setNewTime(e.target.value)}
+            className="goal-box__time"
+          />
+        </div>
         <button onClick={handleAdd} className="goal-box__add-btn">
-          Add
+          Add Goal
         </button>
       </div>
     </div>

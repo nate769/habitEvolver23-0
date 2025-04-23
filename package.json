@@ -16,6 +16,8 @@
     "firebase": "^11.6.0",
     "firebase-admin": "^13.3.0",
     "framer-motion": "^12.7.4",
+    "giphy-api": "^2.0.2",
+    "lottie-react": "^2.4.1",
     "react": "^19.0.0",
     "react-calendar": "^5.1.0",
     "react-dom": "^19.0.0",

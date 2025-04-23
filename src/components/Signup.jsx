@@ -1,5 +1,5 @@
-
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Signup.css';
 
 function Signup({ onSignupSuccess }) {
@@ -8,6 +8,7 @@ function Signup({ onSignupSuccess }) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMatchError, setPasswordMatchError] = useState('');
+  const navigate = useNavigate();
 
   const handleUsernameChange = (event) => setUsername(event.target.value);
   const handleEmailChange = (event) => setEmail(event.target.value);
@@ -23,39 +24,82 @@ function Signup({ onSignupSuccess }) {
       setPasswordMatchError('Passwords do not match');
       return;
     }
-    console.log('Signup submitted:', { username, email, password });
+
+    // Store user data
+    const userData = {
+      username,
+      email,
+      isFirstLogin: true,
+      dateJoined: new Date().toISOString()
+    };
+    localStorage.setItem('userData', JSON.stringify(userData));
+    
+    // Call the success handler
     onSignupSuccess();
-    setUsername('');
-    setEmail('');
-    setPassword('');
-    setConfirmPassword('');
-    setPasswordMatchError('');
+    
+    // Navigate to home page
+    navigate('/');
   };
 
   return (
     <div className="signup-container">
-      <h2>Sign Up</h2>
+      <h2>Start Your Habit Evolution Journey</h2>
+      <p className="signup-bonus">🎉 Sign up now and receive 100 points to start your journey!</p>
+      
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="username">Username:</label>
-          <input type="text" id="username" value={username} onChange={handleUsernameChange} required />
+          <input 
+            type="text" 
+            id="username" 
+            value={username} 
+            onChange={handleUsernameChange} 
+            required 
+          />
         </div>
+        
         <div className="form-group">
           <label htmlFor="email">Email:</label>
-          <input type="email" id="email" value={email} onChange={handleEmailChange} required />
+          <input 
+            type="email" 
+            id="email" 
+            value={email} 
+            onChange={handleEmailChange} 
+            required 
+          />
         </div>
+        
         <div className="form-group">
           <label htmlFor="password">Password:</label>
-          <input type="password" id="password" value={password} onChange={handlePasswordChange} required />
+          <input 
+            type="password" 
+            id="password" 
+            value={password} 
+            onChange={handlePasswordChange} 
+            required 
+          />
         </div>
+        
         <div className="form-group">
           <label htmlFor="confirmPassword">Confirm Password:</label>
-          <input type="password" id="confirmPassword" value={confirmPassword} onChange={handleConfirmPasswordChange} required />
-          {passwordMatchError && <p className="error-message">{passwordMatchError}</p>}
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            value={confirmPassword} 
+            onChange={handleConfirmPasswordChange} 
+            required 
+          />
+          {passwordMatchError && (
+            <p className="error-message">{passwordMatchError}</p>
+          )}
         </div>
-        <button type="submit" className="signup-button">Sign Up</button>
+        
+        <button type="submit" className="signup-button">
+          Start Your Journey
+        </button>
+        
         <p className="login-link">
-          Already have an account? <a href="#" onClick={() => {}}>Log In</a>
+          Already evolving? <a href="/login">Login here</a>
         </p>
       </form>
     </div>
