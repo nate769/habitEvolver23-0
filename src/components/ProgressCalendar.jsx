@@ -1,13 +1,13 @@
-// ProgressCalendar.jsx
+
 import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import './ProgressCalendar.css'; // for custom styles
+import './ProgressCalendar.css'; 
 
 function ProgressCalendar({ completedDates }) {
   const [value, setValue] = useState(new Date());
 
-  // Convert all completedDates to string format for matching
+ 
   const formattedCompleted = completedDates.map(date =>
     new Date(date).toDateString()
   );
