@@ -1,182 +1,129 @@
+
 .goal-box {
-  background: linear-gradient(135deg, 
-    rgba(46, 204, 113, 0.1),
-    rgba(52, 152, 219, 0.1)
-  );
-  color: var(--color-text);
-  padding: 2rem;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  animation: fadeIn var(--transition-normal);
-}
-
-.goal-box__heading {
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  color: var(--color-text);
-  position: relative;
-  padding-bottom: 0.5rem;
-}
-
-.goal-box__heading::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
-  border-radius: var(--radius-full);
-}
-
-.goal-box__list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.goal-box__item {
-  display: flex;
-  align-items: center;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition-normal);
-  gap: 1rem;
-}
-
-.goal-box__item:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.goal-box__text {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: var(--color-text);
-  font-size: 1.1rem;
-}
-
-.goal-box__text input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  border-radius: var(--radius-sm);
-  border: 2px solid var(--color-primary);
-  transition: all var(--transition-fast);
-  cursor: pointer;
-}
-
-.goal-box__text input[type="checkbox"]:checked {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-.goal-box__date,
-.goal-box__time {
-  padding: 0.5rem;
-  border: 1px solid rgba(44, 62, 80, 0.1);
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--color-text);
-  font-size: 0.9rem;
-  transition: all var(--transition-normal);
-}
-
-.goal-box__date:focus,
-.goal-box__time:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.2);
-  outline: none;
-}
-
-.task-streak {
-  background: var(--color-accent);
-  color: white;
-  padding: 0.5rem 0.75rem;
-  border-radius: var(--radius-full);
-  font-size: 0.9rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  animation: float 3s ease-in-out infinite;
-}
-
-.goal-box__remove {
-  background: transparent;
-  border: none;
-  color: var(--color-danger);
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 0.25rem;
-  border-radius: var(--radius-full);
-  transition: all var(--transition-fast);
-  opacity: 0.7;
-}
-
-.goal-box__remove:hover {
-  opacity: 1;
-  background: rgba(231, 76, 60, 0.1);
-  transform: scale(1.1);
-}
-
-.goal-box__form {
-  margin-top: 1.5rem;
-  display: flex;
-  gap: 1rem;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-}
-
-.goal-box__input {
-  flex: 2;
-  padding: 0.75rem 1rem;
-  border: 1px solid rgba(44, 62, 80, 0.1);
-  border-radius: var(--radius-sm);
-  font-size: 1rem;
-  transition: all var(--transition-normal);
-}
-
-.goal-box__input:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.2);
-  outline: none;
-}
-
-.goal-box__add-btn {
-  padding: 0.75rem 1.5rem;
-  background: var(--color-primary);
-  color: white;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition-normal);
-}
-
-.goal-box__add-btn:hover {
-  background: var(--color-primary-dark);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-.goal-box__add-btn:active {
-  transform: translateY(0);
-  box-shadow: var(--shadow-sm);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+    background: linear-gradient(135deg, #00FFFF, #FF69B4); 
+    color: #333; 
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 255, 255, 0.3); 
+    border: 2px solid #e74c3c;
+    animation: fadeIn 0.5s ease-in;
+  }
+  .goal-box__heading {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #FF8C00; 
+    text-shadow: 0 0 5px rgba(255, 140, 0, 0.7);
+  }
+  
+  .goal-box__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .goal-box__item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+  
+  .goal-box__item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .goal-box__text {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ecf0f1;
+    font-size: 1.1rem;
+  }
+  
+  .goal-box__date {
+    background: #2c3e50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 5px rgba(44, 62, 80, 0.3);
+    width: 120px;
+  }
+  
+  .goal-box__time {
+    background: #2c3e50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 5px rgba(44, 62, 80, 0.3);
+    width: 100px;
+  }
+  
+  .task-streak {
+    background: #2c3e50;
+    color: #fff;
+    padding: 0.25rem 0.5rem;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 5px rgba(44, 62, 80, 0.3);
+  }
+  
+  .goal-box__remove {
+    background: transparent;
+    border: none;
+    color: #e74c3c;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .goal-box__remove:hover {
+    color: #c0392b;
+  }
+  
+  .goal-box__form {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  
+  .goal-box__input {
+    flex: 2;
+    padding: 0.75rem;
+    border-radius: 5px;
+    border: none;
+    background: #ecf0f1;
+    color: #2c3e50;
+    font-size: 1rem;
+    box-shadow: inset 0 2px 5px rgba(44, 62, 80, 0.2);
+  }
+  
+  .goal-box__add-btn {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(45deg, #2ecc71, #27ae60);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+    transition: transform 0.3s ease;
+  }
+  
+  .goal-box__add-btn:hover {
+    transform: scale(1.05);
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }

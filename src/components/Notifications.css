@@ -1,65 +1,26 @@
 .notifications {
   position: fixed;
-  bottom: 2rem;
+  bottom: 1.5rem;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 100;
+  z-index: 20;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  max-width: 90vw;
-  width: 400px;
-}
-
-.notification {
-  background: linear-gradient(
-    135deg,
-    rgba(231, 76, 60, 0.95),
-    rgba(192, 57, 43, 0.95)
-  );
-  color: white;
-  padding: 1rem 1.5rem;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  animation: slideInUp 0.3s ease-out, fadeOut 0.3s ease-in 4.7s forwards;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  font-weight: 500;
-  display: flex;
-  align-items: center;
   gap: 0.75rem;
 }
 
-.notification::before {
-  content: '⚠️';
-  font-size: 1.2rem;
+.notification {
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);
+  animation: slideIn 0.5s ease-out;
+  font-size: 1rem;
+  text-align: center;
 }
 
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 100%);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-  to {
-    opacity: 0;
-    transform: translate(-50%, -20px);
-  }
-}
-
-@media (max-width: 768px) {
-  .notifications {
-    bottom: 1rem;
-    width: calc(100% - 2rem);
-  }
+@keyframes slideIn {
+  from { transform: translate(-50%, 100%); }
+  to { transform: translate(-50%, 0); }
 }

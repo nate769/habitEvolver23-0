@@ -1,6 +1,6 @@
+
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import PropTypes from 'prop-types';
+import './Signup.css';
 
 function Signup({ onSignupSuccess }) {
   const [username, setUsername] = useState('');
@@ -8,7 +8,6 @@ function Signup({ onSignupSuccess }) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMatchError, setPasswordMatchError] = useState('');
-  const navigate = useNavigate(); // Use navigate hook
 
   const handleUsernameChange = (event) => setUsername(event.target.value);
   const handleEmailChange = (event) => setEmail(event.target.value);
@@ -24,6 +23,7 @@ function Signup({ onSignupSuccess }) {
       setPasswordMatchError('Passwords do not match');
       return;
     }
+    console.log('Signup submitted:', { username, email, password });
     onSignupSuccess();
     setUsername('');
     setEmail('');
@@ -55,22 +55,11 @@ function Signup({ onSignupSuccess }) {
         </div>
         <button type="submit" className="signup-button">Sign Up</button>
         <p className="login-link">
-          Already have an account?{' '}
-          <button
-            type="button"
-            onClick={() => navigate('/login')} // Navigate to /login
-            className="text-button"
-            aria-label="Switch to login form"
-          >
-            Log In
-          </button>
+          Already have an account? <a href="#" onClick={() => {}}>Log In</a>
         </p>
       </form>
     </div>
   );
 }
-Signup.propTypes = {
-  onSignupSuccess: PropTypes.func.isRequired,
-};
 
 export default Signup;

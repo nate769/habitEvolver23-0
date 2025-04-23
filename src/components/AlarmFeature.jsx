@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { messaging, getToken, onMessage } from '../firebase';
+import { messaging, getToken } from '../firebase';
 
 function AlarmFeature({ task }) {
   const [isAlarmSet, setIsAlarmSet] = useState(false);
   const [token, setToken] = useState(null);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     const requestPermission = async () => {
@@ -16,14 +14,9 @@ function AlarmFeature({ task }) {
           if (fcmToken) {
             setToken(fcmToken);
             setIsAlarmSet(false);
-          } else {
-            throw new Error('Failed to get notification token');
           }
-        } else {
-          throw new Error('Notification permission denied');
         }
       } catch (error) {
-        setError(`Notification setup failed: ${error.message}`);
         console.error('Error getting FCM token:', error);
       }
     };
@@ -32,74 +25,51 @@ function AlarmFeature({ task }) {
   }, []);
 
   const setAlarm = async () => {
-    if (!token || !task.date || !task.time || isAlarmSet) {
-      setError('Cannot set alarm: missing required information');
-      return;
-    }
+    if (!token || !task.date || !task.time || isAlarmSet) return;
 
-    try {
-      const now = new Date();
-      const [day, month, year] = task.date.split('-');
-      const [hours, minutes] = task.time.split(':');
-      const taskTime = new Date(year, month - 1, day, hours, minutes, 0, 0);
-      const timeDiff = taskTime - now;
+    const now = new Date();
+    const [day, month, year] = task.date.split('-');
+    const [hours, minutes] = task.time.split(':');
+    const taskTime = new Date(year, month - 1, day, hours, minutes, 0, 0);
+    const timeDiff = taskTime - now;
 
-      if (timeDiff <= 0) {
-        setError('Cannot set alarm for past time');
-        return;
+    if (timeDiff > 0) {
+      try {
+        const response = await fetch('http://localhost:3000/send-notification', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            token: token,
+            title: `Reminder: ${task.text}`,
+            body: `Time to complete: ${task.text}`,
+            timeDiff: timeDiff,
+          }),
+        });
+
+        if (response.ok) {
+          setIsAlarmSet(true);
+        } else {
+          console.error('Failed to schedule notification:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error scheduling notification:', error);
       }
-
-      const response = await fetch('http://localhost:3000/send-notification', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          token: token,
-          title: `Reminder: ${task.text}`,
-          body: `Time to complete: ${task.text}`,
-          timeDiff: timeDiff,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Server responded with ${response.status}`);
-      }
-
-      setIsAlarmSet(true);
-      setError('');
-    } catch (error) {
-      setError(`Failed to set alarm: ${error.message}`);
-      console.error('Error scheduling notification:', error);
+    } else {
+      console.warn('Task time is in the past:', taskTime);
     }
   };
 
   return (
-    <div className="alarm-feature" role="region" aria-label="Task Alarm">
-      <button
-        onClick={setAlarm}
-        disabled={!token || isAlarmSet}
-        className="goal-box__alarm-btn"
-        aria-disabled={!token || isAlarmSet}
-        aria-label={`Set alarm for task: ${task.text}`}
-      >
-        {isAlarmSet ? 'Alarm Set' : 'Set Alarm'}
-      </button>
-      {error && (
-        <div className="error-message" role="alert" aria-live="polite">
-          {error}
-        </div>
-      )}
-    </div>
+    <button
+      onClick={setAlarm}
+      disabled={!token || isAlarmSet}
+      className="goal-box__alarm-btn"
+    >
+      {isAlarmSet ? 'Alarm Set' : 'Set Alarm'}
+    </button>
   );
 }
-
-AlarmFeature.propTypes = {
-  task: PropTypes.shape({
-    text: PropTypes.string.isRequired,
-    date: PropTypes.string.isRequired,
-    time: PropTypes.string.isRequired
-  }).isRequired
-};
 
 export default AlarmFeature;
