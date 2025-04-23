@@ -1,6 +1,11 @@
-const https = require('https');
-const fs = require('fs');
-const path = require('path');
+import https from 'https';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const images = [
   {
@@ -17,6 +22,21 @@ const images = [
     url: 'https://images.pexels.com/photos/3822622/pexels-photo-3822622.jpeg',
     filename: 'meditate.jpg',
     description: 'Person meditating in peaceful environment'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1506784365847-bbad939e9335',
+    filename: 'calendar-decoration1.jpg',
+    description: 'Person writing in planner'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173',
+    filename: 'calendar-decoration2.jpg',
+    description: 'Organized desk with calendar'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1483058712412-4245e9b90334',
+    filename: 'calendar-decoration3.jpg',
+    description: 'Monthly planning calendar'
   }
 ];
 

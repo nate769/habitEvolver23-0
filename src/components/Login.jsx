@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './Login.css';
 
 function Login({ onLoginSuccess }) {
@@ -73,7 +74,7 @@ function Login({ onLoginSuccess }) {
         </div>
         <button type="submit" className="login-button">Log In</button>
         <p className="signup-link">
-          Don't have an account? <a href="#" onClick={() => {}}>Sign Up</a>
+          Don't have an account? <Link to="/signup">Sign Up</Link>
         </p>
       </form>
     </div>

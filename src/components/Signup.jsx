@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Signup.css';
 
 function Signup({ onSignupSuccess }) {
@@ -99,7 +99,7 @@ function Signup({ onSignupSuccess }) {
         </button>
         
         <p className="login-link">
-          Already evolving? <a href="/login">Login here</a>
+          Already evolving? <Link to="/login">Login here</Link>
         </p>
       </form>
     </div>
