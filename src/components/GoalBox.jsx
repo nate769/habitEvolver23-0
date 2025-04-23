@@ -1,4 +1,3 @@
-// src/components/GoalBox.jsx
 import { useState, useEffect } from 'react';
 import './GoalBox.css';
 import AlarmFeature from './AlarmFeature';
@@ -17,10 +16,23 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
 
+  const formatDateForStorage = (date) => {
+    if (!date) return '';
+    const [year, month, day] = date.split('-');
+    return `${day}-${month}-${year}`;
+  };
+
+  const formatDateForInput = (date) => {
+    if (!date) return '';
+    const [day, month, year] = date.split('-');
+    return `${year}-${month}-${day}`;
+  };
+
   const handleAdd = () => {
     const trimmed = newGoal.trim();
     if (!trimmed) return;
-    setGoals([...goals, { text: trimmed, date: newDate, time: newTime, completed: false, taskStreak: 0 }]);
+    const formattedDate = formatDateForStorage(newDate);
+    setGoals([...goals, { text: trimmed, date: formattedDate, time: newTime, completed: false, taskStreak: 0, lastCompleted: '' }]);
     setNewGoal('');
     setNewDate('');
     setNewTime('09:00');
@@ -31,7 +43,8 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
   };
 
   const handleDateChange = (index, value) => {
-    setGoals(goals.map((g, i) => (i === index ? { ...g, date: value } : g)));
+    const formattedDate = formatDateForStorage(value);
+    setGoals(goals.map((g, i) => (i === index ? { ...g, date: formattedDate } : g)));
   };
 
   const handleTimeChange = (index, value) => {
@@ -52,6 +65,7 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
           setDailyPoints((prev) => prev + 10);
         } else {
           goal.taskStreak = 0;
+          setDailyPoints((prev) => Math.max(0, prev - 10));
         }
       }
       return updatedGoals;
@@ -74,13 +88,13 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
             </span>
             <input
               type="date"
-              value={goal.date}
+              value={formatDateForInput(goal.date)}
               onChange={(e) => handleDateChange(i, e.target.value)}
               className="goal-box__date"
             />
             <input
               type="time"
-              value={goal.time}
+              value={goal.time || '09:00'}
               onChange={(e) => handleTimeChange(i, e.target.value)}
               className="goal-box__time"
             />
@@ -88,7 +102,7 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
             <button className="goal-box__remove" onClick={() => handleRemove(i)}>
               ×
             </button>
-            <AlarmFeature task={{ text: goal.text, date: goal.date, time: goal.time }} />
+            <AlarmFeature task={{ text: goal.text, date: goal.date, time: goal.time || '09:00' }} />
           </li>
         ))}
       </ul>

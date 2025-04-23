@@ -1,43 +1,70 @@
-
 import { useState, useEffect } from 'react';
+import { messaging, getToken } from '../firebase';
 
 function AlarmFeature({ task }) {
   const [isAlarmSet, setIsAlarmSet] = useState(false);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
-    if ('Notification' in window && Notification.permission === 'granted') {
-      setIsAlarmSet(true);
-    } else if (Notification.permission !== 'denied') {
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') setIsAlarmSet(true);
-      });
-    }
+    const requestPermission = async () => {
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          const fcmToken = await getToken(messaging, { vapidKey: 'your-vapid-key' });
+          if (fcmToken) {
+            setToken(fcmToken);
+            setIsAlarmSet(false);
+          }
+        }
+      } catch (error) {
+        console.error('Error getting FCM token:', error);
+      }
+    };
+
+    requestPermission();
   }, []);
 
-  const setAlarm = () => {
-    if (!isAlarmSet || !task.date || !task.time) return;
+  const setAlarm = async () => {
+    if (!token || !task.date || !task.time || isAlarmSet) return;
 
     const now = new Date();
+    const [day, month, year] = task.date.split('-');
     const [hours, minutes] = task.time.split(':');
-    const taskTime = new Date(task.date);
-    taskTime.setHours(hours, minutes, 0, 0);
+    const taskTime = new Date(year, month - 1, day, hours, minutes, 0, 0);
     const timeDiff = taskTime - now;
 
     if (timeDiff > 0) {
-      setTimeout(() => {
-        new Notification(`Reminder: ${task.text}`, {
-          body: `Time to complete: ${task.text}`,
-          icon: '/path/to/icon.png',
+      try {
+        const response = await fetch('http://localhost:3000/send-notification', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            token: token,
+            title: `Reminder: ${task.text}`,
+            body: `Time to complete: ${task.text}`,
+            timeDiff: timeDiff,
+          }),
         });
-      }, timeDiff);
-      setIsAlarmSet(true);
+
+        if (response.ok) {
+          setIsAlarmSet(true);
+        } else {
+          console.error('Failed to schedule notification:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error scheduling notification:', error);
+      }
+    } else {
+      console.warn('Task time is in the past:', taskTime);
     }
   };
 
   return (
     <button
       onClick={setAlarm}
-      disabled={!isAlarmSet || isAlarmSet}
+      disabled={!token || isAlarmSet}
       className="goal-box__alarm-btn"
     >
       {isAlarmSet ? 'Alarm Set' : 'Set Alarm'}
