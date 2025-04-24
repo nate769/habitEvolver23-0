@@ -12,6 +12,9 @@ import WelcomePage from './components/WelcomePage';
 import MotivationalQuote from './components/MotivationalQuote';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import CalendarPage from './components/CalendarPage';
+import { ThemeProvider } from './contexts/ThemeContext';
+import ThemeToggle from './components/ThemeToggle';
+import UserProfile from './components/UserProfile';
 
 function App({ baseUrl = '/' }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -27,9 +30,11 @@ function App({ baseUrl = '/' }) {
     };
   });
   const [goals, setGoals] = useState([
-    { text: 'Get Fit', date: '', completed: false, taskStreak: 0 },
-    { text: 'Improve Coding Skills', date: '', completed: false, taskStreak: 0 },
-    { text: 'Wake Up Early', date: '', completed: false, taskStreak: 0 },
+    { text: 'Exercise for 30 minutes', date: '', completed: false, taskStreak: 0 },
+    { text: 'Read a book chapter', date: '', completed: false, taskStreak: 0 },
+    { text: 'Wake up at 6:00 AM', date: '', completed: false, taskStreak: 0 },
+    { text: 'Practice mindfulness for 10 minutes', date: '', completed: false, taskStreak: 0 },
+    { text: 'Drink 8 glasses of water', date: '', completed: false, taskStreak: 0 }
   ]);
   const [completedDates, setCompletedDates] = useState(() => {
     try {
@@ -168,69 +173,74 @@ function App({ baseUrl = '/' }) {
   }, [goals]);
 
   return (
-    <Router basename={baseUrl}>
-      <div className="app-container">
-        <header className="header">
-          <Link to="/" className="home-link">
-            <img src={logo} className="logo" alt="HabitEvolve Logo" />
-            <span className="logo-text">Home</span>
-          </Link>
-          {isLoggedIn ? (
-            <nav className="nav-menu">
-              <div className="top-right-stats">
-                <div className="streak">🔥 {streak} Day Streak</div>
-                <div className="points">💰 {dailyPoints} Points</div>
-                <div className="achievements-display">
-                  {achievements.weeklyStreak && <span title="7-Day Streak Master">🏅</span>}
-                  {achievements.tenHabits && <span title="Habit Collector">🧠</span>}
-                  {achievements.consistentWeek && <span title="Consistency Champion">🕒</span>}
+    <ThemeProvider>
+      <Router basename={baseUrl}>
+        <div className="app-container">
+          <header className="header">
+            <Link to="/" className="home-link">
+              <img src={logo} className="logo" alt="HabitEvolve Logo" />
+              <span className="logo-text">Home</span>
+            </Link>
+            {isLoggedIn ? (
+              <nav className="nav-menu">
+                <div className="top-right-stats">
+                  <ThemeToggle />
+                  <div className="streak">🔥 {streak} Day Streak</div>
+                  <div className="points">💰 {dailyPoints} Points</div>
+                  <div className="achievements-display">
+                    {achievements.weeklyStreak && <span title="7-Day Streak Master">🏅</span>}
+                    {achievements.tenHabits && <span title="Habit Collector">🧠</span>}
+                    {achievements.consistentWeek && <span title="Consistency Champion">🕒</span>}
+                  </div>
+                  <Link to="/calendar" className="nav-link">📅 Calendar</Link>
+                  <Link to="/notes" className="nav-link">📝 Notes</Link>
+                  <UserProfile />
+                  <button onClick={handleLogout} className="logout-btn">Logout</button>
                 </div>
-                <Link to="/calendar" className="nav-link">📅 Calendar</Link>
-                <Link to="/notes" className="nav-link">📝 Notes</Link>
-                <button onClick={handleLogout} className="logout-btn">Logout</button>
-              </div>
-            </nav>
-          ) : (
-            <nav className="nav-menu">
-              <div className="auth-buttons">
-                <Link to="/login" className="nav-link">Login</Link>
-                <Link to="/signup" className="nav-link">Sign Up</Link>
-              </div>
-            </nav>
-          )}
-        </header>
+              </nav>
+            ) : (
+              <nav className="nav-menu">
+                <ThemeToggle />
+                <div className="auth-buttons">
+                  <Link to="/login" className="nav-link">Login</Link>
+                  <Link to="/signup" className="nav-link">Sign Up</Link>
+                </div>
+              </nav>
+            )}
+          </header>
 
-        <Routes>
-          <Route path="/" element={!isLoggedIn ? <WelcomePage /> : (
-            <div className="main-content logged-in">
-              <h1>Make Your Dreams A Reality One Day At A Time</h1>
-              <MotivationalQuote />
-              <div className="main-content__grid">
-                <div className="main-content__left">
-                  <GoalBox setDailyPoints={setDailyPoints} goals={goals} setGoals={setGoals} />
+          <Routes>
+            <Route path="/" element={!isLoggedIn ? <WelcomePage /> : (
+              <div className="main-content logged-in">
+                <h1>Make Your Dreams A Reality One Day At A Time</h1>
+                <MotivationalQuote />
+                <div className="main-content__grid">
+                  <div className="main-content__left">
+                    <GoalBox setDailyPoints={setDailyPoints} goals={goals} setGoals={setGoals} />
+                  </div>
+                  <div className="main-content__right">
+                    <ProgressTracker goals={goals} />
+                    <RewardShop dailyPoints={dailyPoints} setDailyPoints={setDailyPoints} />
+                  </div>
                 </div>
-                <div className="main-content__right">
-                  <ProgressTracker goals={goals} />
-                  <RewardShop dailyPoints={dailyPoints} setDailyPoints={setDailyPoints} />
-                </div>
+                <Notifications goals={goals} />
               </div>
-              <Notifications goals={goals} />
-            </div>
-          )} />
-          <Route path="/login" element={isLoggedIn ? <Navigate to="/" replace /> : 
-            <Login onLoginSuccess={handleLoginSuccess} />} />
-          <Route path="/signup" element={isLoggedIn ? <Navigate to="/" replace /> : 
-            <Signup onSignupSuccess={handleSignupSuccess} />} />
-          <Route path="/calendar" element={isLoggedIn ? 
-            <CalendarPage completedDates={completedDates} /> : 
-            <Navigate to="/login" state={{ from: "/calendar" }} replace />} />
-          <Route path="/notes" element={isLoggedIn ? 
-            <Notes /> : 
-            <Navigate to="/login" state={{ from: "/notes" }} replace />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </div>
-    </Router>
+            )} />
+            <Route path="/login" element={isLoggedIn ? <Navigate to="/" replace /> : 
+              <Login onLoginSuccess={handleLoginSuccess} />} />
+            <Route path="/signup" element={isLoggedIn ? <Navigate to="/" replace /> : 
+              <Signup onSignupSuccess={handleSignupSuccess} />} />
+            <Route path="/calendar" element={isLoggedIn ? 
+              <CalendarPage completedDates={completedDates} /> : 
+              <Navigate to="/login" state={{ from: "/calendar" }} replace />} />
+            <Route path="/notes" element={isLoggedIn ? 
+              <Notes /> : 
+              <Navigate to="/login" state={{ from: "/notes" }} replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 

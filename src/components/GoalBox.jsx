@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './GoalBox.css';
 import AlarmFeature from './AlarmFeature';
+import Confetti from './Confetti';
+import { motion, AnimatePresence } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+
+const API_URL = 'https://jsonplaceholder.typicode.com/todos';
 
 function GoalBox({ setDailyPoints, goals, setGoals }) {
   const [newGoal, setNewGoal] = useState('');
@@ -9,19 +13,52 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
   const [newTime, setNewTime] = useState('');
   const [newPriority, setNewPriority] = useState('medium');
   const [selectedPriority, setSelectedPriority] = useState('all');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [confettiPosition, setConfettiPosition] = useState(null);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [editValue, setEditValue] = useState('');
 
   useEffect(() => {
-    const savedGoals = localStorage.getItem('goals');
-    if (savedGoals) {
-      const parsedGoals = JSON.parse(savedGoals);
-      // Ensure all goals have a priority
-      const goalsWithPriority = parsedGoals.map(goal => ({
-        ...goal,
-        priority: goal.priority || 'medium' // Default to medium if priority is missing
-      }));
-      setGoals(goalsWithPriority);
-    }
+    fetchGoals();
   }, []);
+
+  const fetchGoals = async () => {
+    try {
+      const response = await fetch(API_URL);
+      if (!response.ok) throw new Error('Failed to fetch goals');
+      const data = await response.json();
+      
+      // Transform API data to match our goal structure
+      const transformedGoals = data.slice(0, 5).map(item => ({
+        text: item.title,
+        date: '',
+        time: '',
+        completed: item.completed,
+        taskStreak: 0,
+        position: 'right',
+        priority: 'medium',
+        completionHistory: [],
+        longestStreak: 0
+      }));
+      
+      setGoals(transformedGoals);
+      setIsLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setIsLoading(false);
+      // Fallback to localStorage if API fails
+      const savedGoals = localStorage.getItem('goals');
+      if (savedGoals) {
+        const parsedGoals = JSON.parse(savedGoals);
+        const goalsWithPriority = parsedGoals.map(goal => ({
+          ...goal,
+          priority: goal.priority || 'medium'
+        }));
+        setGoals(goalsWithPriority);
+      }
+    }
+  };
 
   useEffect(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
@@ -48,9 +85,11 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
     }
   };
 
-  const handleToggle = (index) => {
+  const handleToggle = (index, event) => {
     const updatedGoals = [...goals];
     const goal = updatedGoals[index];
+    const checkbox = event.target;
+    const rect = checkbox.getBoundingClientRect();
     
     goal.completed = !goal.completed;
     
@@ -58,11 +97,26 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
       goal.position = 'left';
       setDailyPoints(prev => prev + 10);
       goal.taskStreak += 1;
+      
+      // Trigger confetti at checkbox position
+      setConfettiPosition({
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+      });
+
+      // Reset confetti after animation
+      setTimeout(() => setConfettiPosition(null), 2000);
+
       goal.longestStreak = Math.max(goal.longestStreak || 0, goal.taskStreak);
       goal.completionHistory = [
         ...(goal.completionHistory || []),
         new Date().toISOString()
       ];
+
+      // Add bounce animation class
+      const listItem = event.target.closest('.goal-box__item');
+      listItem.classList.add('bounce');
+      setTimeout(() => listItem.classList.remove('bounce'), 500);
     } else {
       goal.position = 'right';
       setDailyPoints(prev => Math.max(0, prev - 10));
@@ -121,11 +175,38 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
     return dailyCompletions;
   };
 
+  const handleEdit = (index) => {
+    setEditingIndex(index);
+    setEditValue(goals[index].text);
+  };
+
+  const handleEditSave = () => {
+    if (editValue.trim()) {
+      const updatedGoals = [...goals];
+      updatedGoals[editingIndex].text = editValue;
+      setGoals(updatedGoals);
+    }
+    setEditingIndex(null);
+  };
+
   return (
-    <div className="goal-box">
+    <motion.div 
+      className="goal-box"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      {confettiPosition && (
+        <Confetti x={confettiPosition.x} y={confettiPosition.y} />
+      )}
       <h3 className="goal-box__heading">Your Goals</h3>
       
-      <div className="goal-box__chart">
+      <motion.div 
+        className="goal-box__chart"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.2 }}
+      >
         <h4>Weekly Progress</h4>
         <ResponsiveContainer width="100%" height={200}>
           <LineChart data={getWeeklyCompletionData()} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
@@ -142,9 +223,14 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
             />
           </LineChart>
         </ResponsiveContainer>
-      </div>
+      </motion.div>
 
-      <div className="goal-box__filters">
+      <motion.div 
+        className="goal-box__filters"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
         <button 
           onClick={() => setSelectedPriority('all')}
           className={`filter-btn ${selectedPriority === 'all' ? 'active' : ''}`}
@@ -169,66 +255,142 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
         >
           Low Priority
         </button>
-      </div>
+      </motion.div>
 
-      <ul className="goal-box__list">
-        {filteredGoals.map((goal, index) => (
-          <li key={index} className={`goal-box__item ${goal.completed ? 'completed' : ''} ${goal.position}`}>
-            <div className="goal-box__text">
-              <input
-                type="checkbox"
-                checked={goal.completed}
-                onChange={() => handleToggle(index)}
-                className="goal-box__checkbox"
-              />
-              <span>{goal.text}</span>
-            </div>
-            <div className="goal-box__meta">
-              {goal.date && (
-                <div className="goal-box__datetime">
-                  <span className="goal-box__date">{goal.date}</span>
-                  {goal.time && <span className="goal-box__time">{goal.time}</span>}
-                </div>
-              )}
-              <div className="goal-box__streak">
-                <span className="task-streak" title="Current Streak">
-                  🔥 {goal.taskStreak}
-                </span>
-                {goal.longestStreak > 0 && (
-                  <span className="best-streak" title="Best Streak">
-                    ⭐ {goal.longestStreak}
-                  </span>
+      <AnimatePresence mode="popLayout">
+        <motion.ul className="goal-box__list">
+          {filteredGoals.map((goal, index) => (
+            <motion.li
+              key={goal.id || index}
+              className={`goal-box__item ${goal.completed ? 'completed' : ''} ${goal.position}`}
+              layout
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ 
+                type: "spring",
+                stiffness: 500,
+                damping: 25,
+                mass: 0.5
+              }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="goal-box__text">
+                <motion.input
+                  type="checkbox"
+                  checked={goal.completed}
+                  onChange={(e) => handleToggle(index, e)}
+                  className="goal-box__checkbox"
+                  whileTap={{ scale: 0.8 }}
+                />
+                {editingIndex === index ? (
+                  <motion.input
+                    type="text"
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    onBlur={handleEditSave}
+                    onKeyDown={(e) => e.key === 'Enter' && handleEditSave()}
+                    className="goal-box__edit-input"
+                    initial={{ scale: 0.8 }}
+                    animate={{ scale: 1 }}
+                    autoFocus
+                  />
+                ) : (
+                  <motion.span 
+                    onDoubleClick={() => handleEdit(index)}
+                    whileHover={{ scale: 1.02 }}
+                  >
+                    {goal.text}
+                  </motion.span>
                 )}
               </div>
-              <span 
-                className="priority-badge"
-                style={{ backgroundColor: getPriorityColor(goal.priority || 'medium') }}
-                title={`${(goal.priority || 'medium').charAt(0).toUpperCase() + (goal.priority || 'medium').slice(1)} Priority`}
+              <motion.div 
+                className="goal-box__meta"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
               >
-                {getPriorityIcon(goal.priority || 'medium')}
-              </span>
-            </div>
-            {goal.completionHistory && goal.completionHistory.length > 0 && (
-              <div className="completion-timeline">
-                {goal.completionHistory.slice(-5).map((date, i) => (
-                  <span 
-                    key={i} 
-                    className="completion-dot"
-                    title={new Date(date).toLocaleDateString()}
-                  >✓</span>
-                ))}
-              </div>
-            )}
-            <button 
-              onClick={() => handleDelete(index)}
-              className="goal-box__delete-btn"
-            >
-              ×
-            </button>
-          </li>
-        ))}
-      </ul>
-      <div className="goal-box__form">
+                {goal.date && (
+                  <motion.div 
+                    className="goal-box__datetime"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <span className="goal-box__date">{goal.date}</span>
+                    {goal.time && <span className="goal-box__time">{goal.time}</span>}
+                  </motion.div>
+                )}
+                <div className="goal-box__streak">
+                  <motion.span 
+                    className="task-streak" 
+                    title="Current Streak"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    🔥 {goal.taskStreak}
+                  </motion.span>
+                  {goal.longestStreak > 0 && (
+                    <motion.span 
+                      className="best-streak" 
+                      title="Best Streak"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      ⭐ {goal.longestStreak}
+                    </motion.span>
+                  )}
+                </div>
+                <motion.span 
+                  className="priority-badge"
+                  style={{ backgroundColor: getPriorityColor(goal.priority || 'medium') }}
+                  title={`${(goal.priority || 'medium').charAt(0).toUpperCase() + (goal.priority || 'medium').slice(1)} Priority`}
+                  whileHover={{ scale: 1.1, rotate: 360 }}
+                  transition={{ rotate: { duration: 0.5 } }}
+                >
+                  {getPriorityIcon(goal.priority || 'medium')}
+                </motion.span>
+              </motion.div>
+              {goal.completionHistory && goal.completionHistory.length > 0 && (
+                <motion.div 
+                  className="completion-timeline"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  {goal.completionHistory.slice(-5).map((date, i) => (
+                    <motion.span 
+                      key={i} 
+                      className="completion-dot"
+                      title={new Date(date).toLocaleDateString()}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: i * 0.1 }}
+                      whileHover={{ scale: 1.2 }}
+                    >
+                      ✓
+                    </motion.span>
+                  ))}
+                </motion.div>
+              )}
+              <motion.button 
+                onClick={() => handleDelete(index)}
+                className="goal-box__delete-btn"
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                ×
+              </motion.button>
+            </motion.li>
+          ))}
+        </motion.ul>
+      </AnimatePresence>
+
+      <motion.div 
+        className="goal-box__form"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+      >
         <input
           type="text"
           value={newGoal}
@@ -260,11 +422,16 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
             <option value="low">Low Priority</option>
           </select>
         </div>
-        <button onClick={handleAdd} className="goal-box__add-btn">
+        <motion.button 
+          onClick={handleAdd} 
+          className="goal-box__add-btn"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
           Add Goal
-        </button>
-      </div>
-    </div>
+        </motion.button>
+      </motion.div>
+    </motion.div>
   );
 }
 

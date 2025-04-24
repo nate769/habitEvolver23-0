@@ -49,10 +49,20 @@
     padding: 1rem;
     background: #f8f9fa;
     border-radius: 15px;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     gap: 1rem;
     border: 1px solid rgba(58, 123, 213, 0.1);
     position: relative;
+}
+
+.goal-box__item.bounce {
+    animation: bounce 0.5s cubic-bezier(0.36, 0, 0.66, -0.56);
+    transform-origin: center;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-10px) scale(1.05); }
 }
 
 .goal-box__item:hover {
@@ -65,6 +75,18 @@
     background: linear-gradient(135deg, #f1f8f5, #ffffff);
     border-left: 4px solid #4CAF50;
     order: -1;
+    animation: slide-complete 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slide-complete {
+    from {
+        opacity: 0.7;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .goal-box__text {
@@ -77,12 +99,39 @@
     position: relative;
 }
 
+.goal-box__edit-input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+    font-size: 1.1rem;
+    color: var(--text);
+    background: var(--card-bg);
+    transition: all 0.3s ease;
+}
+
+.goal-box__edit-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
 .goal-box__checkbox {
     width: 24px;
     height: 24px;
     cursor: pointer;
     accent-color: #4caf50;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+
+.goal-box__checkbox:checked {
+    animation: checkbox-pop 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes checkbox-pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
 }
 
 .goal-box__checkbox:hover {
@@ -140,6 +189,17 @@
     display: flex;
     align-items: center;
     gap: 0.3rem;
+    transform-origin: center;
+}
+
+.task-streak:hover {
+    animation: pulse 0.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
 }
 
 .goal-box__delete-btn {
@@ -333,6 +393,11 @@
   display: flex;
   align-items: center;
   gap: 0.2rem;
+  transform-origin: center;
+}
+
+.best-streak:hover {
+    animation: pulse 0.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 .goal-box__priority {

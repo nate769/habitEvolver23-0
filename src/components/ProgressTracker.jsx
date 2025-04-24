@@ -1,10 +1,16 @@
 import { useState, useEffect } from 'react';
 import './ProgressTracker.css';
+import { motion, useSpring } from 'framer-motion';
 
 function ProgressTracker({ goals }) {
   const [progress, setProgress] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
+
+  const springProgress = useSpring(0, {
+    stiffness: 60,
+    damping: 15
+  });
 
   useEffect(() => {
     const calculateProgress = () => {
@@ -12,37 +18,99 @@ function ProgressTracker({ goals }) {
       const total = goals.length;
       setCompletedCount(completed);
       setTotalCount(total);
-      setProgress(total > 0 ? (completed / total) * 100 : 0);
+      const newProgress = total > 0 ? (completed / total) * 100 : 0;
+      setProgress(newProgress);
+      springProgress.set(newProgress);
     };
 
     calculateProgress();
-  }, [goals]);
+  }, [goals, springProgress]);
 
   return (
-    <div className="progress-tracker">
-      <h3>Daily Progress</h3>
-      <div className="progress-stats">
-        <div className="progress-stat">
+    <motion.div 
+      className="progress-tracker"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.h3
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        Daily Progress
+      </motion.h3>
+
+      <motion.div 
+        className="progress-stats"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.3 }}
+      >
+        <motion.div 
+          className="progress-stat"
+          whileHover={{ scale: 1.05 }}
+        >
           <span className="stat-label">Completed</span>
-          <span className="stat-value">{completedCount}</span>
-        </div>
-        <div className="progress-stat">
+          <motion.span 
+            className="stat-value"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ 
+              type: "spring",
+              stiffness: 500,
+              damping: 30,
+              delay: 0.4 
+            }}
+          >
+            {completedCount}
+          </motion.span>
+        </motion.div>
+        
+        <motion.div 
+          className="progress-stat"
+          whileHover={{ scale: 1.05 }}
+        >
           <span className="stat-label">Total</span>
-          <span className="stat-value">{totalCount}</span>
-        </div>
-      </div>
+          <motion.span 
+            className="stat-value"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ 
+              type: "spring",
+              stiffness: 500,
+              damping: 30,
+              delay: 0.5 
+            }}
+          >
+            {totalCount}
+          </motion.span>
+        </motion.div>
+      </motion.div>
+
       <div className="progress-bar">
-        <div 
+        <motion.div 
           className="progress-fill" 
-          style={{ width: `${progress}%` }}
-          role="progressbar"
-          aria-valuenow={progress}
-          aria-valuemin="0"
-          aria-valuemax="100"
+          style={{ width: springProgress }}
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={{ 
+            type: "spring",
+            stiffness: 60,
+            damping: 15 
+          }}
         />
       </div>
-      <p className="progress-percentage">{Math.round(progress)}% Complete</p>
-    </div>
+
+      <motion.p 
+        className="progress-percentage"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.6 }}
+      >
+        {Math.round(progress)}% Complete
+      </motion.p>
+    </motion.div>
   );
 }
 

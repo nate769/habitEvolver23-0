@@ -4,7 +4,7 @@ html, body {
   width: 100%;
   height: 100%;
   overflow-x: hidden;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+  background: var(--background);
 }
 
 .main-content {
@@ -14,6 +14,7 @@ html, body {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
   min-height: calc(100vh - 80px);
+  color: var(--text);
 }
 
 .main-content__grid {
@@ -82,37 +83,35 @@ html, body {
 }
 
 #goal-box-container {
-  background: linear-gradient(135deg, #ffffff, #f8f9fa);
-  color: #333;
+  background: var(--card-bg);
+  color: var(--text);
   padding: 1.5rem;
   border-radius: 15px;
-  box-shadow: 0 6px 20px rgba(0, 255, 255, 0.3);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
   animation: fadeIn 0.5s ease-in;
   flex: 1 1 300px;
   max-width: 100%;
 }
 
 #progress-tracker-container {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--card-bg);
   padding: 1rem;
   border-radius: 15px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(5px);
-  border: 1px solid rgba(142, 68, 173, 0.3);
-  z-index: 15;
+  border: 1px solid var(--border-color);
   flex: 1 1 300px;
-  max-width: 100%;
 }
 
 #reward-shop-container {
   width: 100%;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--card-bg);
   padding: 1rem;
   border-radius: 15px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(5px);
-  border: 1px solid rgba(142, 68, 173, 0.3);
+  border: 1px solid var(--border-color);
   margin-bottom: 1.5rem;
   flex: 1 1 300px;
 }
@@ -138,8 +137,8 @@ html, body {
   position: relative;
   overflow: hidden;
   font-family: 'Arial', sans-serif;
-  color: #2c3e50;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(246, 248, 252, 0.9) 100%);
+  color: var(--text);
+  background: var(--background);
 }
 
 .app-container::before {
@@ -165,7 +164,7 @@ html, body {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background: linear-gradient(135deg, #3a7bd5, #2980b9);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;

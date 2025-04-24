@@ -1,3 +1,7 @@
+import React, { useState, useEffect } from 'react';
+import './App.css';
+import logo from './assets/Habitevolve.png';
+import Neglish from './components/Neglish';
 // ...existing imports...
 
 function App() {
@@ -19,7 +23,7 @@ function App() {
                   <h1>Make Your Dreams A Reality One Day At A Time</h1>
                   <div className="main-content__grid">
                     <div className="main-content__left">
-                      <GoalBox setDailyPoints={setDailyPoints} goals={goals} setGoals={setGoals} />
+                      <Neglish setDailyPoints={setDailyPoints} goals={goals} setGoals={setGoals} />
                     </div>
                     <div className="main-content__right">
                       <ProgressTracker goals={goals} />
