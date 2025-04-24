@@ -154,13 +154,45 @@ html, body {
   z-index: 20;
 }
 
+.home-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: #fff;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.home-link:hover {
+  transform: translateY(-2px);
+}
+
 .logo {
-  width: 80px;
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
   transition: transform 0.3s ease;
 }
 
 .logo:hover {
   transform: scale(1.1);
+}
+
+.logo-text {
+  font-size: 1.2rem;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .logo-text {
+    display: block;
+  }
+  
+  .logo {
+    width: 60px;
+    height: 60px;
+  }
 }
 
 .top-right-stats {
@@ -241,7 +273,10 @@ html, body {
     flex-direction: column;
     align-items: center;
     padding: 1rem;
-    text-align: center;
+  }
+
+  .header {
+    padding: 0.75rem;
   }
 
   .logo {
@@ -251,6 +286,13 @@ html, body {
   .top-right-stats {
     flex-direction: column;
     align-items: center;
+    margin-top: 0.5rem;
+  }
+
+  .top-right-stats {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
     margin-top: 0.5rem;
   }
 
@@ -276,6 +318,63 @@ html, body {
   #progress-tracker-container {
     position: static;
     margin-top: 1rem;
+  }
+
+  .nav-link, .logout-btn {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .streak, .points {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .nav-menu {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .top-right-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.5rem;
+    width: 100%;
+    margin-top: 0.75rem;
+  }
+
+  .streak, 
+  .points,
+  .nav-link,
+  .logout-btn {
+    width: 100%;
+    text-align: center;
+    margin: 0;
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+  }
+
+  .home-link {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .logo-text {
+    display: block;
+    font-size: 1.1rem;
+  }
+
+  .auth-buttons {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
   }
 }
 
@@ -317,4 +416,10 @@ html, body {
   .main-content h1 {
     font-size: 2.5rem;
   }
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }

@@ -3,9 +3,12 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
+// Ensure proper base URL handling
+const baseUrl = import.meta.env.BASE_URL || '/'
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <App baseUrl={baseUrl} />
   </StrictMode>,
 )
 
