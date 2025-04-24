@@ -7,11 +7,15 @@ function ProgressTracker({ goals }) {
   const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
-    const completedGoals = goals.filter(goal => goal.completed).length;
-    const totalGoals = goals.length;
-    setCompletedCount(completedGoals);
-    setTotalCount(totalGoals);
-    setProgress(totalGoals > 0 ? (completedGoals / totalGoals) * 100 : 0);
+    const calculateProgress = () => {
+      const completed = goals.filter(goal => goal.completed).length;
+      const total = goals.length;
+      setCompletedCount(completed);
+      setTotalCount(total);
+      setProgress(total > 0 ? (completed / total) * 100 : 0);
+    };
+
+    calculateProgress();
   }, [goals]);
 
   return (
@@ -31,7 +35,11 @@ function ProgressTracker({ goals }) {
         <div 
           className="progress-fill" 
           style={{ width: `${progress}%` }}
-        ></div>
+          role="progressbar"
+          aria-valuenow={progress}
+          aria-valuemin="0"
+          aria-valuemax="100"
+        />
       </div>
       <p className="progress-percentage">{Math.round(progress)}% Complete</p>
     </div>

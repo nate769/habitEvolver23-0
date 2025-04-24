@@ -29,16 +29,17 @@ function Signup({ onSignupSuccess }) {
     const userData = {
       username,
       email,
+      password, // In a real app, this should be hashed
       isFirstLogin: true,
       dateJoined: new Date().toISOString()
     };
+    
+    // Save to localStorage
     localStorage.setItem('userData', JSON.stringify(userData));
+    localStorage.setItem('isRegistered', 'true');
     
-    // Call the success handler
-    onSignupSuccess();
-    
-    // Navigate to home page
-    navigate('/');
+    // Navigate to login page
+    navigate('/login');
   };
 
   return (

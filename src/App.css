@@ -11,18 +11,22 @@ html, body {
   padding: 2rem;
   position: relative;
   z-index: 10;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
+  min-height: calc(100vh - 80px);
 }
 
 .main-content__grid {
   display: grid;
-  grid-template-columns: 3fr 2fr;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
   grid-template-areas: 
     "left right"
     "bottom bottom";
-  gap: 1.5rem;
+  gap: 2rem;
   margin-top: 2rem;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .main-content__left {
@@ -42,17 +46,29 @@ html, body {
 
 .main-content h1 {
   font-family: 'Playfair Display', serif;
-  font-size: 3rem;
+  font-size: 2.8rem;
   font-weight: bold;
-  text-decoration: underline;
-  text-underline-offset: 8px;
-  background: linear-gradient(45deg, #e74c3c, #e67e22);
+  background: linear-gradient(135deg, #2c3e50, #3498db);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   margin-bottom: 2rem;
   text-align: center;
-  width: 100%;
+  padding: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.main-content h1::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background: linear-gradient(90deg, #3498db, #2c3e50);
+  border-radius: 2px;
 }
 
 .main-content > aside {
@@ -149,9 +165,13 @@ html, body {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background: linear-gradient(90deg, #3a7bd5, #3a6073);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  z-index: 20;
+  background: linear-gradient(135deg, #3a7bd5, #2980b9);
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .home-link {
@@ -197,19 +217,24 @@ html, body {
 
 .top-right-stats {
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  gap: 1.2rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1.2rem;
+  border-radius: 30px;
+  backdrop-filter: blur(5px);
 }
 
 .streak,
 .points {
-  background: #fff;
-  color: #2c3e50;
-  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  padding: 0.6rem 1.2rem;
   border-radius: 20px;
   font-weight: 600;
   font-size: 1rem;
-  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .streak:hover,
@@ -218,18 +243,20 @@ html, body {
 }
 
 .nav-link {
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.2rem;
   color: #fff;
   text-decoration: none;
   border-radius: 20px;
   transition: all 0.3s ease;
-  margin: 0 0.5rem;
   background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-weight: 500;
 }
 
 .nav-link:hover {
   background: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .logout-btn {
@@ -421,5 +448,60 @@ html, body {
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
+}
+
+.achievements-display {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  align-items: center;
+}
+
+.achievements-display span {
+  font-size: 1.2rem;
+  cursor: help;
+  transition: transform 0.3s ease;
+}
+
+.achievements-display span:hover {
+  transform: scale(1.2);
+}
+
+.achievement-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #ffd700, #ffa500);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 15px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2);
+  z-index: 1000;
+  animation: slideDown 0.5s ease-out;
+}
+
+.achievement-notification.fade-out {
+  animation: fadeOut 0.5s ease-out forwards;
+}
+
+@keyframes slideDown {
+  from { 
+    transform: translate(-50%, -100%);
+    opacity: 0;
+  }
+  to { 
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }

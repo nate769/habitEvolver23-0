@@ -1,26 +1,61 @@
 .notifications {
   position: fixed;
-  bottom: 1.5rem;
+  bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 20;
+  z-index: 100;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
+  max-width: 90%;
+  width: 400px;
 }
 
 .notification {
-  background: linear-gradient(45deg, #e74c3c, #c0392b);
+  background: linear-gradient(135deg, #3a7bd5, #2980b9);
   color: #fff;
-  padding: 0.75rem 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);
-  animation: slideIn 0.5s ease-out;
-  font-size: 1rem;
+  padding: 1rem 1.5rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(58, 123, 213, 0.2);
+  animation: slideInUp 0.5s ease-out, fadeOut 0.5s ease-out 4.5s forwards;
+  font-size: 1.1rem;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-@keyframes slideIn {
-  from { transform: translate(-50%, 100%); }
-  to { transform: translate(-50%, 0); }
+.notification::before {
+  content: "🔔";
+  font-size: 1.2rem;
+}
+
+@keyframes slideInUp {
+  from { 
+    transform: translate(-50%, 100%);
+    opacity: 0;
+  }
+  to { 
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@media (max-width: 768px) {
+  .notifications {
+    bottom: 1rem;
+    width: 90%;
+  }
+  
+  .notification {
+    font-size: 1rem;
+    padding: 0.8rem 1.2rem;
+  }
 }

@@ -2,9 +2,10 @@
   max-width: 800px;
   margin: 0 auto;
   background: #fff;
-  padding: 2rem;
-  border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  border-radius: 25px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(58, 123, 213, 0.1);
 }
 
 .react-calendar {
@@ -12,27 +13,35 @@
   border: none;
   font-family: 'Arial', sans-serif;
   line-height: 1.125em;
-  padding: 1rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(58, 123, 213, 0.02) 0%, rgba(41, 128, 185, 0.02) 100%);
+  border-radius: 20px;
 }
 
 .react-calendar__navigation {
-  height: 60px;
-  margin-bottom: 1rem;
+  height: 70px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .react-calendar__navigation button {
   min-width: 44px;
-  background: none;
+  background: #fff;
   font-size: 1.2rem;
   color: #2c3e50;
-  border-radius: 8px;
+  border-radius: 12px;
   transition: all 0.3s ease;
+  border: 1px solid rgba(58, 123, 213, 0.1);
+  padding: 0.8rem;
 }
 
 .react-calendar__navigation button:enabled:hover,
 .react-calendar__navigation button:enabled:focus {
-  background-color: #f0f9ff;
-  color: #3498db;
+  background: linear-gradient(135deg, #3a7bd5, #2980b9);
+  color: #fff;
+  transform: translateY(-2px);
 }
 
 .react-calendar__navigation button[disabled] {
@@ -42,10 +51,10 @@
 .react-calendar__month-view__weekdays {
   text-align: center;
   text-transform: uppercase;
-  font-weight: bold;
+  font-weight: 600;
   font-size: 0.9rem;
-  margin-bottom: 0.5rem;
   color: #3498db;
+  margin-bottom: 1rem;
 }
 
 .react-calendar__month-view__weekdays__weekday {
@@ -54,33 +63,33 @@
 
 .react-calendar__tile {
   position: relative;
-  padding: 1.5rem 0.5rem;
+  padding: 1.8rem 0.5rem;
   background: none;
   text-align: center;
   line-height: 16px;
-  font-size: 1rem;
+  font-size: 1.1rem;
   border-radius: 12px;
   transition: all 0.3s ease;
   margin: 2px;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
 }
 
 .react-calendar__tile:enabled:hover,
 .react-calendar__tile:enabled:focus {
-  background-color: #f0f9ff;
+  background: rgba(52, 152, 219, 0.1);
   border-color: #3498db;
   transform: translateY(-2px);
 }
 
 .react-calendar__tile--now {
-  background: #fff5e6;
-  border-color: #ffa500;
+  background: rgba(52, 152, 219, 0.05);
+  border-color: #3498db;
 }
 
 .react-calendar__tile--now:enabled:hover,
 .react-calendar__tile--now:enabled:focus {
-  background: #fff0d4;
-  border-color: #ff8c00;
+  background: rgba(52, 152, 219, 0.1);
+  border-color: #2980b9;
 }
 
 .mark-check::after {
@@ -105,17 +114,16 @@
 
 .react-calendar__tile--hasActive,
 .react-calendar__tile--active {
-  background: #e8f5fe;
-  border-color: #2980b9;
-  color: #2c3e50;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  border-color: transparent;
+  color: #fff;
 }
 
 .react-calendar__tile--hasActive:enabled:hover,
 .react-calendar__tile--hasActive:enabled:focus,
 .react-calendar__tile--active:enabled:hover,
 .react-calendar__tile--active:enabled:focus {
-  background: #d4ebfd;
-  border-color: #2980b9;
+  background: linear-gradient(135deg, #2980b9, #2573a7);
 }
 
 @keyframes popIn {
@@ -134,10 +142,13 @@
 
 .calendar-container h3 {
   text-align: center;
-  margin-bottom: 1.5rem;
-  color: #2c3e50;
-  font-size: 1.8rem;
-  font-weight: 600;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #3a7bd5, #2980b9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
   font-family: 'Playfair Display', serif;
 }
 
@@ -153,19 +164,25 @@
 
 @media (max-width: 768px) {
   .calendar-container {
-    padding: 1rem;
+    padding: 1.5rem;
+    margin: 1rem;
   }
 
   .react-calendar__tile {
-    padding: 1rem 0.25rem;
-    font-size: 0.9rem;
+    padding: 1.5rem 0.25rem;
+    font-size: 1rem;
   }
 
   .react-calendar__navigation button {
+    padding: 0.6rem;
     font-size: 1rem;
   }
 
   .react-calendar__month-view__weekdays {
     font-size: 0.8rem;
+  }
+
+  .calendar-container h3 {
+    font-size: 1.8rem;
   }
 }
