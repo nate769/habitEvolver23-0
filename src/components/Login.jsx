@@ -22,8 +22,16 @@ function Login({ onLoginSuccess }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log('Login submitted:', { username, password });
-    if (username === 'test' && password === 'password') {
+    
+    // Get stored user data
+    const storedUserData = localStorage.getItem('userData');
+    if (!storedUserData) {
+      alert('No registered users found. Please sign up first.');
+      return;
+    }
+
+    const userData = JSON.parse(storedUserData);
+    if (username === userData.username && password === userData.password) {
       if (rememberMe) {
         localStorage.setItem('rememberedUsername', username);
       } else {
@@ -31,7 +39,7 @@ function Login({ onLoginSuccess }) {
       }
       onLoginSuccess();
     } else {
-      alert('Login failed');
+      alert('Invalid username or password');
     }
     setPassword('');
   };
