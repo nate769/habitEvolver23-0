@@ -8,8 +8,9 @@ import { FaBook, FaDumbbell, FaBrain, FaHeart, FaLaptopCode, FaMedal, FaClock, F
 import CalendarHeatmap from 'react-calendar-heatmap';
 import 'react-calendar-heatmap/dist/styles.css';
 import useSound from 'use-sound';
-import successSound from '../assets/sounds/success.mp3';
-// import { FaBook, FaDumbbell, FaBrain, FaHeart, FaLaptopCode, FaMedal, FaClock } from 'react-icons/fa';
+
+// Use CDN URL instead of local file
+const successSoundUrl = 'https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c19592.mp3';
 
 const API_URL = 'https://jsonplaceholder.typicode.com/todos';
 
@@ -269,7 +270,7 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
   const [confettiPosition, setConfettiPosition] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editValue, setEditValue] = useState('');
-  const [playSuccess] = useSound(successSound);
+  const [playSuccess] = useSound(successSoundUrl);
   const [showQuote, setShowQuote] = useState(false);
 
   useEffect(() => {
