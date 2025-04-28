@@ -3,115 +3,58 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 export const ThemeContext = createContext();
 
 export const themes = {
-  light: {
-    name: 'light',
-    background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%)',
-    text: '#2c3e50',
-    primary: '#3498db',
-    secondary: '#2980b9',
-    success: '#2ecc71',
-    cardBg: '#ffffff',
-    borderColor: 'rgba(58, 123, 213, 0.1)'
-  },
   dark: {
     name: 'dark',
-    background: 'linear-gradient(135deg, #2c3e50 0%, #1a202c 100%)',
-    text: '#f5f7fa',
-    primary: '#3498db',
-    secondary: '#2980b9',
+    background: 'linear-gradient(135deg, #181c24 0%, #232946 100%)',
+    text: '#f3f6fa',
+    primary: '#4f8cff',
+    secondary: '#232946',
     success: '#2ecc71',
-    cardBg: '#34495e',
-    borderColor: 'rgba(255, 255, 255, 0.1)'
+    cardBg: '#232946',
+    borderColor: 'rgba(255, 255, 255, 0.08)'
   },
   calm: {
     name: 'calm',
-    background: 'linear-gradient(135deg, #e8f3f7 0%, #e0f0e9 100%)',
+    background: 'linear-gradient(135deg, #eaf6f6 0%, #e0f7fa 100%)',
     text: '#2c3e50',
-    primary: '#4caf50',
-    secondary: '#388e3c',
+    primary: '#5ec6ca',
+    secondary: '#b2dfdb',
     success: '#81c784',
     cardBg: '#ffffff',
-    borderColor: 'rgba(76, 175, 80, 0.1)'
+    borderColor: 'rgba(94, 198, 202, 0.13)'
   }
 };
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
-    return savedTheme || 'light';
-  });
-
-  const [customTheme, setCustomTheme] = useState(() => {
-    const savedCustomTheme = localStorage.getItem('customTheme');
-    return savedCustomTheme ? JSON.parse(savedCustomTheme) : null;
+    return savedTheme && Object.keys(themes).includes(savedTheme) ? savedTheme : 'dark';
   });
 
   useEffect(() => {
     localStorage.setItem('theme', theme);
-    applyTheme(theme, customTheme);
-  }, [theme, customTheme]);
+    applyTheme(theme);
+  }, [theme]);
 
-  const applyTheme = (themeName, custom = null) => {
+  const applyTheme = (themeName) => {
     const root = document.documentElement;
-    if (custom) {
-      root.style.setProperty('--background', custom.background || 'linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%)');
-      root.style.setProperty('--text', custom.text || '#2c3e50');
-      root.style.setProperty('--primary', custom.primary || '#3498db');
-      root.style.setProperty('--secondary', custom.secondary || '#2980b9');
-      root.style.setProperty('--card-bg', custom.cardBg || '#ffffff');
-      root.style.setProperty('--border-color', custom.borderColor || 'rgba(58, 123, 213, 0.1)');
-    } else {
-      switch (themeName) {
-        case 'dark':
-          root.style.setProperty('--background', 'linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%)');
-          root.style.setProperty('--text', '#e0e0e0');
-          root.style.setProperty('--primary', '#3498db');
-          root.style.setProperty('--secondary', '#2980b9');
-          root.style.setProperty('--card-bg', '#2c3e50');
-          root.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.1)');
-          break;
-        case 'golden':
-          root.style.setProperty('--background', 'linear-gradient(135deg, #fff9c4 0%, #fff176 100%)');
-          root.style.setProperty('--text', '#5d4037');
-          root.style.setProperty('--primary', '#ffd700');
-          root.style.setProperty('--secondary', '#daa520');
-          root.style.setProperty('--card-bg', '#ffffff');
-          root.style.setProperty('--border-color', 'rgba(218, 165, 32, 0.2)');
-          break;
-        default: // light theme
-          root.style.setProperty('--background', 'linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%)');
-          root.style.setProperty('--text', '#2c3e50');
-          root.style.setProperty('--primary', '#3498db');
-          root.style.setProperty('--secondary', '#2980b9');
-          root.style.setProperty('--card-bg', '#ffffff');
-          root.style.setProperty('--border-color', 'rgba(58, 123, 213, 0.1)');
-      }
-    }
+    const t = themes[themeName] || themes.dark;
+    root.style.setProperty('--background', t.background);
+    root.style.setProperty('--text', t.text);
+    root.style.setProperty('--primary', t.primary);
+    root.style.setProperty('--secondary', t.secondary);
+    root.style.setProperty('--card-bg', t.cardBg);
+    root.style.setProperty('--border-color', t.borderColor);
   };
 
-  const toggleTheme = () => {
-    setTheme(prevTheme => {
-      const newTheme = prevTheme === 'light' ? 'dark' : 'light';
-      return newTheme;
-    });
-  };
-
-  const setGoldenTheme = () => {
-    setTheme('golden');
-  };
-
-  const setCustomThemeColors = (colors) => {
-    setCustomTheme(colors);
-    localStorage.setItem('customTheme', JSON.stringify(colors));
+  const toggleTheme = (themeName) => {
+    setTheme(themeName);
   };
 
   return (
     <ThemeContext.Provider value={{ 
-      theme, 
-      toggleTheme, 
-      setGoldenTheme,
-      setCustomThemeColors,
-      customTheme 
+      theme: themes[theme], 
+      toggleTheme,
     }}>
       {children}
     </ThemeContext.Provider>
