@@ -5,60 +5,27 @@ import Confetti from './Confetti';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
-const API_URL = 'https://jsonplaceholder.typicode.com/todos';
-
 function GoalBox({ setDailyPoints, goals, setGoals }) {
   const [newGoal, setNewGoal] = useState('');
   const [newDate, setNewDate] = useState('');
   const [newTime, setNewTime] = useState('');
   const [newPriority, setNewPriority] = useState('medium');
   const [selectedPriority, setSelectedPriority] = useState('all');
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [confettiPosition, setConfettiPosition] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editValue, setEditValue] = useState('');
 
   useEffect(() => {
-    fetchGoals();
-  }, []);
-
-  const fetchGoals = async () => {
-    try {
-      const response = await fetch(API_URL);
-      if (!response.ok) throw new Error('Failed to fetch goals');
-      const data = await response.json();
-      
-      // Transform API data to match our goal structure
-      const transformedGoals = data.slice(0, 5).map(item => ({
-        text: item.title,
-        date: '',
-        time: '',
-        completed: item.completed,
-        taskStreak: 0,
-        position: 'right',
-        priority: 'medium',
-        completionHistory: [],
-        longestStreak: 0
+    const savedGoals = localStorage.getItem('goals');
+    if (savedGoals) {
+      const parsedGoals = JSON.parse(savedGoals);
+      const goalsWithPriority = parsedGoals.map(goal => ({
+        ...goal,
+        priority: goal.priority || 'medium'
       }));
-      
-      setGoals(transformedGoals);
-      setIsLoading(false);
-    } catch (err) {
-      setError(err.message);
-      setIsLoading(false);
-      // Fallback to localStorage if API fails
-      const savedGoals = localStorage.getItem('goals');
-      if (savedGoals) {
-        const parsedGoals = JSON.parse(savedGoals);
-        const goalsWithPriority = parsedGoals.map(goal => ({
-          ...goal,
-          priority: goal.priority || 'medium'
-        }));
-        setGoals(goalsWithPriority);
-      }
+      setGoals(goalsWithPriority);
     }
-  };
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
@@ -97,7 +64,7 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
       goal.position = 'left';
       setDailyPoints(prev => prev + 10);
       goal.taskStreak += 1;
-      
+
       // Trigger confetti at checkbox position
       setConfettiPosition({
         x: rect.left + rect.width / 2,
@@ -201,30 +168,6 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
       )}
       <h3 className="goal-box__heading">Your Goals</h3>
       
-      <motion.div 
-        className="goal-box__chart"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.2 }}
-      >
-        <h4>Weekly Progress</h4>
-        <ResponsiveContainer width="100%" height={200}>
-          <LineChart data={getWeeklyCompletionData()} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-            <Line 
-              type="monotone" 
-              dataKey="completions" 
-              stroke="#3a7bd5" 
-              strokeWidth={2}
-              dot={{ fill: '#3a7bd5' }}
-              activeDot={{ r: 8 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </motion.div>
-
       <motion.div 
         className="goal-box__filters"
         initial={{ opacity: 0, y: -10 }}

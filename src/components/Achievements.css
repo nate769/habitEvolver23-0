@@ -1,0 +1,212 @@
+.achievements {
+    background: #ffffff;
+    color: #2c3e50;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(58, 123, 213, 0.1);
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.achievements h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #3a7bd5, #2980b9);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-align: center;
+    font-weight: 600;
+}
+
+.achievements h4 {
+    font-size: 1rem;
+    color: #2c3e50;
+    margin: 1rem 0 0.5rem;
+    font-weight: 600;
+}
+
+.streak-freeze {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #f8f9fa, #ffffff);
+    border-radius: 8px;
+    border: 1px solid rgba(58, 123, 213, 0.1);
+    margin-bottom: 1rem;
+}
+
+.streak-freeze-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.streak-freeze-icon {
+    font-size: 1.2rem;
+}
+
+.streak-freeze-text {
+    font-size: 0.9rem;
+    color: #2c3e50;
+}
+
+.streak-freeze-btn {
+    padding: 0.4rem 0.8rem;
+    background: linear-gradient(135deg, #3a7bd5, #2980b9);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.streak-freeze-btn:disabled {
+    background: #e0e0e0;
+    cursor: not-allowed;
+}
+
+.streak-freeze-btn.active {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+}
+
+.badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.badge {
+    background: #fff;
+    border: 1px solid rgba(58, 123, 213, 0.1);
+    border-radius: 8px;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.badge.locked {
+    opacity: 0.5;
+    filter: grayscale(1);
+}
+
+.badge.unlocked {
+    background: linear-gradient(135deg, #f8f9fa, #ffffff);
+    border-color: rgba(58, 123, 213, 0.2);
+}
+
+.badge-icon {
+    font-size: 1.5rem;
+}
+
+.badge-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2c3e50;
+    text-align: center;
+}
+
+.badge-description {
+    font-size: 0.8rem;
+    color: #7f8c8d;
+    text-align: center;
+}
+
+.templates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.template-card {
+    background: #fff;
+    border: 1px solid rgba(58, 123, 213, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.template-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.template-card h5 {
+    font-size: 1rem;
+    color: #2c3e50;
+    margin: 0;
+    font-weight: 600;
+}
+
+.template-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.template-card li {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.template-card li::before {
+    content: "•";
+    color: #3a7bd5;
+}
+
+.apply-template-btn {
+    padding: 0.5rem;
+    background: linear-gradient(135deg, #3a7bd5, #2980b9);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: auto;
+}
+
+.apply-template-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(58, 123, 213, 0.2);
+}
+
+@media (max-width: 768px) {
+    .achievements {
+        padding: 0.75rem;
+    }
+
+    .badges-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+
+    .templates-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .template-card {
+        padding: 0.75rem;
+    }
+} 

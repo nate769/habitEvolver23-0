@@ -1,0 +1,75 @@
+.weekly-progress {
+  background-color: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 20px 0;
+}
+
+.weekly-progress h3 {
+  margin: 0 0 20px 0;
+  color: #2c3e50;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.weekly-chart {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 200px;
+  padding: 10px 0;
+}
+
+.day-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 5px;
+}
+
+.bar-container {
+  width: 30px;
+  height: 150px;
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 10px;
+}
+
+.progress-bar {
+  width: 100%;
+  min-height: 4px;
+  border-radius: 4px;
+  position: relative;
+  transition: height 0.3s ease;
+}
+
+.completion-count {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.day-label {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 5px;
+}
+
+@media (max-width: 600px) {
+  .bar-container {
+    width: 20px;
+  }
+  
+  .day-label {
+    font-size: 0.8rem;
+  }
+  
+  .completion-count {
+    font-size: 0.7rem;
+  }
+} 

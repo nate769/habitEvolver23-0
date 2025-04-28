@@ -58,21 +58,6 @@ function RewardShop({ dailyPoints, setDailyPoints }) {
     }
   };
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
-  };
-
   return (
     <motion.div 
       className="reward-shop"
@@ -90,51 +75,11 @@ function RewardShop({ dailyPoints, setDailyPoints }) {
         {dailyPoints} Points
       </motion.div>
 
-      {unlockedStickers.length > 0 && (
-        <motion.div 
-          className="unlocked-stickers"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <h4>Your Collection</h4>
-          <motion.div 
-            className="sticker-grid"
-            variants={container}
-            initial="hidden"
-            animate="show"
-          >
-            {unlockedStickers.map((sticker) => (
-              <motion.div
-                key={sticker.id}
-                className="sticker"
-                variants={item}
-                whileHover={{ 
-                  scale: 1.2, 
-                  rotate: [0, -10, 10, -10, 0],
-                  transition: { duration: 0.5 }
-                }}
-                role="button"
-                tabIndex={0}
-              >
-                {sticker.name.split(' ')[0]}
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
-      )}
-
-      <motion.div 
-        className="reward-list"
-        variants={container}
-        initial="hidden"
-        animate="show"
-      >
+      <div className="reward-list">
         {items.map((item, index) => (
           <motion.div
             key={item.id}
             className={`reward-item ${item.type}`}
-            variants={item}
             whileHover={{ scale: 1.03, y: -5 }}
           >
             <div className="reward-info">
@@ -153,7 +98,7 @@ function RewardShop({ dailyPoints, setDailyPoints }) {
             </motion.button>
           </motion.div>
         ))}
-      </motion.div>
+      </div>
 
       <AnimatePresence>
         {notification && (

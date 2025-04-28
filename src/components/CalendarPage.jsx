@@ -1,5 +1,6 @@
 import React from "react";
 import ProgressCalendar from "./ProgressCalendar";
+import WeeklyProgress from "./WeeklyProgress";
 import calendarDecoration1 from '../assets/calendar-decoration1.jpg';
 import calendarDecoration2 from '../assets/calendar-decoration2.jpg';
 import calendarDecoration3 from '../assets/calendar-decoration3.jpg';
@@ -23,6 +24,7 @@ const CalendarPage = ({ completedDates }) => {
 
         <div className="calendar-main">
           <ProgressCalendar completedDates={completedDates} />
+          <WeeklyProgress completedDates={completedDates} />
           <div className="calendar-stats">
             <div className="stat-item">
               <span className="stat-emoji">🎯</span>

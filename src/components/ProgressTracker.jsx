@@ -6,6 +6,7 @@ function ProgressTracker({ goals }) {
   const [progress, setProgress] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   const springProgress = useSpring(0, {
     stiffness: 60,
@@ -14,13 +15,20 @@ function ProgressTracker({ goals }) {
 
   useEffect(() => {
     const calculateProgress = () => {
-      const completed = goals.filter(goal => goal.completed).length;
-      const total = goals.length;
-      setCompletedCount(completed);
-      setTotalCount(total);
-      const newProgress = total > 0 ? (completed / total) * 100 : 0;
-      setProgress(newProgress);
-      springProgress.set(newProgress);
+      setIsLoading(true);
+      try {
+        const completed = goals.filter(goal => goal.completed).length;
+        const total = goals.length;
+        setCompletedCount(completed);
+        setTotalCount(total);
+        const newProgress = total > 0 ? (completed / total) * 100 : 0;
+        setProgress(newProgress);
+        springProgress.set(newProgress);
+      } catch (error) {
+        console.error('Error calculating progress:', error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     calculateProgress();
@@ -63,7 +71,7 @@ function ProgressTracker({ goals }) {
               delay: 0.4 
             }}
           >
-            {completedCount}
+            {isLoading ? '...' : completedCount}
           </motion.span>
         </motion.div>
         
@@ -83,7 +91,7 @@ function ProgressTracker({ goals }) {
               delay: 0.5 
             }}
           >
-            {totalCount}
+            {isLoading ? '...' : totalCount}
           </motion.span>
         </motion.div>
       </motion.div>
@@ -93,7 +101,7 @@ function ProgressTracker({ goals }) {
           className="progress-fill" 
           style={{ width: springProgress }}
           initial={{ width: 0 }}
-          animate={{ width: `${progress}%` }}
+          animate={{ width: isLoading ? 0 : `${progress}%` }}
           transition={{ 
             type: "spring",
             stiffness: 60,

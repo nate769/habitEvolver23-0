@@ -15,6 +15,7 @@ import CalendarPage from './components/CalendarPage';
 import { ThemeProvider } from './contexts/ThemeContext';
 import ThemeToggle from './components/ThemeToggle';
 import UserProfile from './components/UserProfile';
+import Achievements from './components/Achievements';
 
 function App({ baseUrl = '/' }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -29,13 +30,10 @@ function App({ baseUrl = '/' }) {
       consistentWeek: false
     };
   });
-  const [goals, setGoals] = useState([
-    { text: 'Exercise for 30 minutes', date: '', completed: false, taskStreak: 0 },
-    { text: 'Read a book chapter', date: '', completed: false, taskStreak: 0 },
-    { text: 'Wake up at 6:00 AM', date: '', completed: false, taskStreak: 0 },
-    { text: 'Practice mindfulness for 10 minutes', date: '', completed: false, taskStreak: 0 },
-    { text: 'Drink 8 glasses of water', date: '', completed: false, taskStreak: 0 }
-  ]);
+  const [goals, setGoals] = useState(() => {
+    const savedGoals = localStorage.getItem('goals');
+    return savedGoals ? JSON.parse(savedGoals) : [];
+  });
   const [completedDates, setCompletedDates] = useState(() => {
     try {
       const saved = localStorage.getItem('completedDates');
@@ -57,7 +55,25 @@ function App({ baseUrl = '/' }) {
 
     const savedGoals = localStorage.getItem('goals');
     if (savedGoals) setGoals(JSON.parse(savedGoals));
-  }, []);
+
+    // Fetch goals from API if user is logged in
+    if (isLoggedIn) {
+      fetch('https://api.habitevolve.com/goals', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data && data.length > 0) {
+          setGoals(data);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching goals:', error);
+      });
+    }
+  }, [isLoggedIn]);
 
   useEffect(() => {
     try {
@@ -210,29 +226,38 @@ function App({ baseUrl = '/' }) {
           </header>
 
           <Routes>
-            <Route path="/" element={!isLoggedIn ? <WelcomePage /> : (
-              <div className="main-content logged-in">
-                <h1>Make Your Dreams A Reality One Day At A Time</h1>
-                <MotivationalQuote />
-                <div className="main-content__grid">
-                  <div className="main-content__left">
-                    <GoalBox setDailyPoints={setDailyPoints} goals={goals} setGoals={setGoals} />
+            <Route
+              path="/"
+              element={
+                isLoggedIn ? (
+                  <div className="main-content logged-in">
+                    <h1>Make Your Dreams A Reality One Day At A Time</h1>
+                    <div className="main-content__grid">
+                      <div className="main-content__left">
+                        <GoalBox setDailyPoints={setDailyPoints} goals={goals} setGoals={setGoals} />
+                        <RewardShop dailyPoints={dailyPoints} setDailyPoints={setDailyPoints} />
+                      </div>
+                      <div className="main-content__right">
+                        <ProgressTracker goals={goals} />
+                        <Achievements 
+                          streak={streak}
+                          dailyPoints={dailyPoints}
+                          setDailyPoints={setDailyPoints}
+                          goals={goals}
+                          setGoals={setGoals}
+                        />
+                      </div>
+                    </div>
+                    <Notifications goals={goals} />
                   </div>
-                  <div className="main-content__right">
-                    <ProgressTracker goals={goals} />
-                    <RewardShop dailyPoints={dailyPoints} setDailyPoints={setDailyPoints} />
-                  </div>
-                </div>
-                <Notifications goals={goals} />
-              </div>
-            )} />
-            <Route path="/login" element={isLoggedIn ? <Navigate to="/" replace /> : 
-              <Login onLoginSuccess={handleLoginSuccess} />} />
-            <Route path="/signup" element={isLoggedIn ? <Navigate to="/" replace /> : 
-              <Signup onSignupSuccess={handleSignupSuccess} />} />
-            <Route path="/calendar" element={isLoggedIn ? 
-              <CalendarPage completedDates={completedDates} /> : 
-              <Navigate to="/login" state={{ from: "/calendar" }} replace />} />
+                ) : showSignup ? (
+                  <Signup onSignupSuccess={handleSignupSuccess} />
+                ) : (
+                  <Login onLoginSuccess={handleLoginSuccess} />
+                )
+              }
+            />
+            <Route path="/calendar" element={<CalendarPage completedDates={completedDates} />} />
             <Route path="/notes" element={isLoggedIn ? 
               <Notes /> : 
               <Navigate to="/login" state={{ from: "/notes" }} replace />} />
