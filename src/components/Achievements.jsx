@@ -91,16 +91,18 @@ function Achievements({ streak, dailyPoints, setDailyPoints, goals, setGoals }) 
   };
 
   const applyTemplate = (template) => {
-    const newGoals = template.goals.map(goal => ({
-      text: goal,
-      completed: false,
-      taskStreak: 0,
-      position: 'right',
-      priority: 'medium',
-      completionHistory: [],
-      longestStreak: 0
-    }));
-    setGoals([...goals, ...newGoals]);
+    if (window.confirm(`Would you like to add the "${template.name}" goals to your list?`)) {
+      const newGoals = template.goals.map(goal => ({
+        text: goal,
+        completed: false,
+        taskStreak: 0,
+        position: 'right',
+        priority: 'medium',
+        completionHistory: [],
+        longestStreak: 0
+      }));
+      setGoals([...goals, ...newGoals]);
+    }
   };
 
   return (

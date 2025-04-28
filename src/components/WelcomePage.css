@@ -107,7 +107,6 @@ blockquote:hover {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
 }
 
-/* Fixing blockquote::before selector and other syntax issues */
 blockquote::before {
   content: "";
   position: absolute;

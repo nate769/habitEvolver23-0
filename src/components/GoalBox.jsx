@@ -16,18 +16,6 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
   const [editValue, setEditValue] = useState('');
 
   useEffect(() => {
-    const savedGoals = localStorage.getItem('goals');
-    if (savedGoals) {
-      const parsedGoals = JSON.parse(savedGoals);
-      const goalsWithPriority = parsedGoals.map(goal => ({
-        ...goal,
-        priority: goal.priority || 'medium'
-      }));
-      setGoals(goalsWithPriority);
-    }
-  }, []);
-
-  useEffect(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
 
@@ -62,7 +50,7 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
     
     if (goal.completed) {
       goal.position = 'left';
-      setDailyPoints(prev => prev + 10);
+      setDailyPoints(prev => prev + 20);
       goal.taskStreak += 1;
 
       // Trigger confetti at checkbox position
@@ -86,7 +74,7 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
       setTimeout(() => listItem.classList.remove('bounce'), 500);
     } else {
       goal.position = 'right';
-      setDailyPoints(prev => Math.max(0, prev - 10));
+      setDailyPoints(prev => Math.max(0, prev - 20));
       goal.taskStreak = Math.max(0, goal.taskStreak - 1);
     }
     

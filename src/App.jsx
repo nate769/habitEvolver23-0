@@ -23,16 +23,16 @@ function App({ baseUrl = '/' }) {
   const [streak, setStreak] = useState(0);
   const [dailyPoints, setDailyPoints] = useState(0);
   const [achievements, setAchievements] = useState(() => {
-    const saved = localStorage.getItem('achievements');
-    return saved ? JSON.parse(saved) : {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    return currentUser?.achievements || {
       weeklyStreak: false,
       tenHabits: false,
       consistentWeek: false
     };
   });
   const [goals, setGoals] = useState(() => {
-    const savedGoals = localStorage.getItem('goals');
-    return savedGoals ? JSON.parse(savedGoals) : [];
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    return currentUser?.goals || [];
   });
   const [completedDates, setCompletedDates] = useState(() => {
     try {
@@ -44,47 +44,46 @@ function App({ baseUrl = '/' }) {
   });
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    const storedIsLoggedIn = localStorage.getItem('isLoggedIn');
-    if (token || storedIsLoggedIn === 'true') {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    if (currentUser) {
       setIsLoggedIn(true);
-    }
-
-    const savedPoints = localStorage.getItem('dailyPoints');
-    if (savedPoints) setDailyPoints(parseInt(savedPoints, 10));
-
-    const savedGoals = localStorage.getItem('goals');
-    if (savedGoals) setGoals(JSON.parse(savedGoals));
-
-    // Fetch goals from API if user is logged in
-    if (isLoggedIn) {
-      fetch('https://api.habitevolve.com/goals', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data && data.length > 0) {
-          setGoals(data);
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching goals:', error);
+      setDailyPoints(currentUser.points || 0);
+      setGoals(currentUser.goals || []);
+      setAchievements(currentUser.achievements || {
+        weeklyStreak: false,
+        tenHabits: false,
+        consistentWeek: false
       });
+    } else {
+      // If no user is logged in, ensure we're showing the welcome page
+      setIsLoggedIn(false);
+      setShowSignup(false);
     }
-  }, [isLoggedIn]);
+  }, []);
 
   useEffect(() => {
     try {
-      localStorage.setItem('dailyPoints', dailyPoints.toString());
-      localStorage.setItem('goals', JSON.stringify(goals));
-      localStorage.setItem('isLoggedIn', isLoggedIn.toString());
+      const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+      if (currentUser) {
+        currentUser.points = dailyPoints;
+        currentUser.goals = goals;
+        currentUser.achievements = achievements;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        
+        // Update user in users array
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const userIndex = users.findIndex(u => u.username === currentUser.username);
+        if (userIndex !== -1) {
+          users[userIndex] = currentUser;
+          localStorage.setItem('users', JSON.stringify(users));
+        }
+      }
+      
       localStorage.setItem('completedDates', JSON.stringify(completedDates));
     } catch (error) {
       console.error('Error saving data:', error);
     }
-  }, [dailyPoints, goals, isLoggedIn, completedDates]);
+  }, [dailyPoints, goals, achievements, completedDates]);
 
   useEffect(() => {
     const calculateStreak = () => {
@@ -158,19 +157,23 @@ function App({ baseUrl = '/' }) {
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
     setShowSignup(false);
-    localStorage.setItem('authToken', 'token_' + Date.now());
   };
 
   const handleSignupSuccess = () => {
     setIsLoggedIn(true);
     setShowSignup(false);
-    localStorage.setItem('authToken', 'token_' + Date.now());
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('currentUser');
+    setGoals([]);
+    setDailyPoints(0);
+    setAchievements({
+      weeklyStreak: false,
+      tenHabits: false,
+      consistentWeek: false
+    });
   };
 
   const markTodayAsCompleted = () => {
@@ -250,17 +253,51 @@ function App({ baseUrl = '/' }) {
                     </div>
                     <Notifications goals={goals} />
                   </div>
-                ) : showSignup ? (
-                  <Signup onSignupSuccess={handleSignupSuccess} />
                 ) : (
-                  <Login onLoginSuccess={handleLoginSuccess} />
+                  <WelcomePage />
                 )
               }
             />
-            <Route path="/calendar" element={<CalendarPage completedDates={completedDates} />} />
-            <Route path="/notes" element={isLoggedIn ? 
-              <Notes /> : 
-              <Navigate to="/login" state={{ from: "/notes" }} replace />} />
+            <Route 
+              path="/login" 
+              element={
+                isLoggedIn ? (
+                  <Navigate to="/" replace />
+                ) : (
+                  <Login onLoginSuccess={handleLoginSuccess} />
+                )
+              } 
+            />
+            <Route 
+              path="/signup" 
+              element={
+                isLoggedIn ? (
+                  <Navigate to="/" replace />
+                ) : (
+                  <Signup onSignupSuccess={handleSignupSuccess} />
+                )
+              } 
+            />
+            <Route 
+              path="/calendar" 
+              element={
+                isLoggedIn ? (
+                  <CalendarPage completedDates={completedDates} />
+                ) : (
+                  <Navigate to="/" replace />
+                )
+              } 
+            />
+            <Route 
+              path="/notes" 
+              element={
+                isLoggedIn ? (
+                  <Notes />
+                ) : (
+                  <Navigate to="/login" state={{ from: "/notes" }} replace />
+                )
+              } 
+            />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
