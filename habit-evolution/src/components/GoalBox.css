@@ -143,7 +143,6 @@
     margin: 0 1rem;
 }
 
-.goal-box__date,
 .goal-box__time {
     background: var(--card-bg);
     color: var(--text);
@@ -154,15 +153,10 @@
     transition: all 0.3s ease;
 }
 
-.goal-box__date:focus,
 .goal-box__time:focus {
     border-color: var(--primary);
     outline: none;
     box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.2);
-}
-
-.goal-box__date {
-    width: 120px;
 }
 
 .goal-box__time {
@@ -676,36 +670,31 @@
 }
 
 .goal-heatmap {
-    margin: 1rem 0;
-    padding: 1rem;
-    background: var(--card-bg-light);
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
+    display: none;
 }
 
 .react-calendar-heatmap {
-    width: 100%;
-    height: auto;
+    display: none;
 }
 
 .react-calendar-heatmap .color-empty {
-    fill: var(--card-bg);
+    display: none;
 }
 
 .react-calendar-heatmap .color-scale-1 {
-    fill: var(--success-light);
+    display: none;
 }
 
 .react-calendar-heatmap .color-scale-2 {
-    fill: var(--success);
+    display: none;
 }
 
 .react-calendar-heatmap .color-scale-3 {
-    fill: var(--success-dark);
+    display: none;
 }
 
 .react-calendar-heatmap .color-scale-4 {
-    fill: var(--success-darker);
+    display: none;
 }
 
 .search-filter {

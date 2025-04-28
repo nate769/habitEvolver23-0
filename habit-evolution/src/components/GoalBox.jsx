@@ -4,9 +4,7 @@ import AlarmFeature from './AlarmFeature';
 import Confetti from './Confetti';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { FaBook, FaDumbbell, FaBrain, FaHeart, FaLaptopCode, FaMedal, FaClock, FaEdit, FaSearch, FaCalendarAlt } from 'react-icons/fa';
-import CalendarHeatmap from 'react-calendar-heatmap';
-import 'react-calendar-heatmap/dist/styles.css';
+import { FaBook, FaDumbbell, FaBrain, FaHeart, FaLaptopCode, FaMedal, FaClock, FaEdit, FaSearch } from 'react-icons/fa';
 import useSound from 'use-sound';
 
 // Use CDN URL instead of local file
@@ -261,11 +259,10 @@ function MotivationalQuote({ isVisible }) {
 
 function GoalBox({ setDailyPoints, goals, setGoals }) {
   const [newGoal, setNewGoal] = useState('');
-  const [newDate, setNewDate] = useState('');
   const [newTime, setNewTime] = useState('');
   const [newPriority, setNewPriority] = useState('medium');
   const [selectedPriority, setSelectedPriority] = useState('all');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [confettiPosition, setConfettiPosition] = useState(null);
   const [editingIndex, setEditingIndex] = useState(null);
@@ -274,45 +271,17 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
   const [showQuote, setShowQuote] = useState(false);
 
   useEffect(() => {
-    fetchGoals();
-  }, []);
-
-  const fetchGoals = async () => {
-    try {
-      const response = await fetch(API_URL);
-      if (!response.ok) throw new Error('Failed to fetch goals');
-      const data = await response.json();
-      
-      // Transform API data to match our goal structure
-      const transformedGoals = data.slice(0, 5).map(item => ({
-        text: item.title,
-        date: '',
-        time: '',
-        completed: item.completed,
-        taskStreak: 0,
-        position: 'right',
-        priority: 'medium',
-        completionHistory: [],
-        longestStreak: 0
+    // Load goals from localStorage on component mount
+    const savedGoals = localStorage.getItem('goals');
+    if (savedGoals) {
+      const parsedGoals = JSON.parse(savedGoals);
+      const goalsWithPriority = parsedGoals.map(goal => ({
+        ...goal,
+        priority: goal.priority || 'medium'
       }));
-      
-      setGoals(transformedGoals);
-      setIsLoading(false);
-    } catch (err) {
-      setError(err.message);
-      setIsLoading(false);
-      // Fallback to localStorage if API fails
-      const savedGoals = localStorage.getItem('goals');
-      if (savedGoals) {
-        const parsedGoals = JSON.parse(savedGoals);
-        const goalsWithPriority = parsedGoals.map(goal => ({
-          ...goal,
-          priority: goal.priority || 'medium'
-        }));
-        setGoals(goalsWithPriority);
-      }
+      setGoals(goalsWithPriority);
     }
-  };
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
@@ -322,7 +291,6 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
     if (newGoal.trim()) {
       const newGoalObj = {
         text: newGoal,
-        date: newDate,
         time: newTime,
         completed: false,
         taskStreak: 0,
@@ -333,7 +301,6 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
       };
       setGoals([...goals, newGoalObj]);
       setNewGoal('');
-      setNewDate('');
       setNewTime('');
       setNewPriority('medium');
     }
@@ -460,129 +427,85 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
       {confettiPosition && (
         <Confetti x={confettiPosition.x} y={confettiPosition.y} />
       )}
-      <h3 className="goal-box__heading">Your Goals</h3>
-      
       <motion.div 
-        className="goal-box__chart"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
+        className="goal-box__header"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
       >
-        <WeeklyProgress data={getWeeklyCompletionData()} />
+        <h2>Goals</h2>
+        <div className="goal-box__filters">
+          <select 
+            value={selectedPriority}
+            onChange={(e) => setSelectedPriority(e.target.value)}
+            className="goal-box__filter"
+          >
+            <option value="all">All Priorities</option>
+            <option value="high">High Priority</option>
+            <option value="medium">Medium Priority</option>
+            <option value="low">Low Priority</option>
+          </select>
+        </div>
       </motion.div>
 
       <motion.div 
-        className="goal-box__filters"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
+        className="goal-box__list"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
       >
-        <button 
-          onClick={() => setSelectedPriority('all')}
-          className={`filter-btn ${selectedPriority === 'all' ? 'active' : ''}`}
-        >
-          All
-        </button>
-        <button 
-          onClick={() => setSelectedPriority('high')}
-          className={`filter-btn ${selectedPriority === 'high' ? 'active' : ''}`}
-        >
-          High Priority
-        </button>
-        <button 
-          onClick={() => setSelectedPriority('medium')}
-          className={`filter-btn ${selectedPriority === 'medium' ? 'active' : ''}`}
-        >
-          Medium Priority
-        </button>
-        <button 
-          onClick={() => setSelectedPriority('low')}
-          className={`filter-btn ${selectedPriority === 'low' ? 'active' : ''}`}
-        >
-          Low Priority
-        </button>
-      </motion.div>
-
-      <MotivationalQuote isVisible={showQuote} />
-
-      <AnimatePresence mode="popLayout">
-        <motion.ul className="goal-box__list">
-          {filteredGoals.map((goal, index) => (
-            <motion.li
-              key={goal.id || index}
-              className={`goal-box__item ${goal.completed ? 'completed' : ''} ${goal.position}`}
-              layout
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ 
-                type: "spring",
-                stiffness: 500,
-                damping: 25,
-                mass: 0.5
-              }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <div className="goal-box__text">
-                <motion.input
-                  type="checkbox"
-                  checked={goal.completed}
-                  onChange={(e) => handleToggle(index, e)}
-                  className="goal-box__checkbox"
-                  whileTap={{ scale: 0.8 }}
+        {filteredGoals.map((goal, index) => (
+          <motion.div
+            key={index}
+            className={`goal-box__item ${goal.completed ? 'completed' : ''}`}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.1 }}
+            style={{ order: goal.position === 'left' ? -1 : 1 }}
+          >
+            <input
+              type="checkbox"
+              checked={goal.completed}
+              onChange={(e) => handleToggle(index, e)}
+              className="goal-box__checkbox"
+            />
+            <div className="goal-box__content">
+              {editingIndex === index ? (
+                <input
+                  type="text"
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const updatedGoals = [...goals];
+                      updatedGoals[index].text = editValue;
+                      setGoals(updatedGoals);
+                      setEditingIndex(null);
+                    }
+                  }}
+                  className="goal-box__edit-input"
+                  autoFocus
                 />
-                {editingIndex === index ? (
-                  <motion.input
-                    type="text"
-                    value={editValue}
-                    onChange={(e) => setEditValue(e.target.value)}
-                    onBlur={handleEditSave}
-                    onKeyDown={(e) => e.key === 'Enter' && handleEditSave()}
-                    className="goal-box__edit-input"
-                    initial={{ scale: 0.8 }}
-                    animate={{ scale: 1 }}
-                    autoFocus
-                  />
-                ) : (
-                  <div className="goal-content">
-                    <motion.span 
-                      className="goal-title"
-                      onDoubleClick={() => handleEdit(index)}
-                      whileHover={{ scale: 1.02 }}
-                    >
-                      {goal.text}
-                    </motion.span>
-                    <motion.button
-                      className="edit-button"
-                      onClick={() => handleEdit(index)}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <FaEdit />
-                    </motion.button>
-                    <div className="goal-tags">
-                      {goal.tags?.map((tag, i) => (
-                        <span key={i} className="goal-tag">#{tag}</span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-              <GoalHeatmap completionHistory={goal.completionHistory || []} />
+              ) : (
+                <motion.div 
+                  className="goal-box__text"
+                  whileHover={{ scale: 1.02 }}
+                >
+                  {goal.text}
+                </motion.div>
+              )}
               <motion.div 
                 className="goal-box__meta"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
               >
-                {goal.date && (
+                {goal.time && (
                   <motion.div 
                     className="goal-box__datetime"
                     whileHover={{ scale: 1.05 }}
                   >
-                    <span className="goal-box__date">{goal.date}</span>
-                    {goal.time && <span className="goal-box__time">{goal.time}</span>}
+                    <span className="goal-box__time">{goal.time}</span>
                   </motion.div>
                 )}
                 <div className="goal-box__streak">
@@ -615,40 +538,31 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
                   {getPriorityIcon(goal.priority || 'medium')}
                 </motion.span>
               </motion.div>
-              {goal.completionHistory && goal.completionHistory.length > 0 && (
-                <motion.div 
-                  className="completion-timeline"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  {goal.completionHistory.slice(-5).map((date, i) => (
-                    <motion.span 
-                      key={i} 
-                      className="completion-dot"
-                      title={new Date(date).toLocaleDateString()}
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: i * 0.1 }}
-                      whileHover={{ scale: 1.2 }}
-                    >
-                      ✓
-                    </motion.span>
-                  ))}
-                </motion.div>
-              )}
-              <motion.button 
+            </div>
+            <div className="goal-box__actions">
+              <motion.button
+                onClick={() => {
+                  setEditingIndex(index);
+                  setEditValue(goal.text);
+                }}
+                className="goal-box__edit-btn"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <FaEdit />
+              </motion.button>
+              <motion.button
                 onClick={() => handleDelete(index)}
                 className="goal-box__delete-btn"
-                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
                 ×
               </motion.button>
-            </motion.li>
-          ))}
-        </motion.ul>
-      </AnimatePresence>
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
 
       <motion.div 
         className="goal-box__form"
@@ -656,9 +570,39 @@ function GoalBox({ setDailyPoints, goals, setGoals }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
       >
-        <AddGoalForm onAddGoal={(newGoal) => {
-          setGoals([...goals, newGoal]);
-        }} />
+        <input
+          type="text"
+          value={newGoal}
+          onChange={(e) => setNewGoal(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+          className="goal-box__input"
+          placeholder="Add new goal..."
+        />
+        <div className="goal-box__datetime-inputs">
+          <input
+            type="time"
+            value={newTime}
+            onChange={(e) => setNewTime(e.target.value)}
+            className="goal-box__time"
+          />
+          <select 
+            value={newPriority}
+            onChange={(e) => setNewPriority(e.target.value)}
+            className="goal-box__priority"
+          >
+            <option value="high">High Priority</option>
+            <option value="medium">Medium Priority</option>
+            <option value="low">Low Priority</option>
+          </select>
+        </div>
+        <motion.button 
+          onClick={handleAdd} 
+          className="goal-box__add-btn"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          Add Goal
+        </motion.button>
       </motion.div>
     </motion.div>
   );
