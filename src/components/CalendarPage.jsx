@@ -1,12 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import ProgressCalendar from "./ProgressCalendar";
 import WeeklyProgress from "./WeeklyProgress";
 import calendarDecoration1 from '../assets/calendar-decoration1.jpg';
 import calendarDecoration2 from '../assets/calendar-decoration2.jpg';
 import calendarDecoration3 from '../assets/calendar-decoration3.jpg';
+import QuotesManager from './QuotesManager';
 import './CalendarPage.css';
 
 const CalendarPage = ({ completedDates }) => {
+  const [eventMarkers, setEventMarkers] = useState({});
+
+  const handleAddMarker = (date, marker) => {
+    const dateString = date.toDateString();
+    setEventMarkers(prev => ({
+      ...prev,
+      [dateString]: [...(prev[dateString] || []), marker]
+    }));
+  };
+
   return (
     <div className="calendar-page">
       <div className="calendar-header">
@@ -18,12 +29,16 @@ const CalendarPage = ({ completedDates }) => {
         <div className="calendar-decoration left">
           <img src={calendarDecoration1} alt="Planning" className="decoration-image" />
           <div className="motivation-quote">
-            "Success is not final, failure is not fatal: it is the courage to continue that counts."
+            <QuotesManager type="daily" />
           </div>
         </div>
 
         <div className="calendar-main">
-          <ProgressCalendar completedDates={completedDates} />
+          <ProgressCalendar 
+            completedDates={completedDates} 
+            eventMarkers={eventMarkers}
+            onAddMarker={handleAddMarker}
+          />
           <WeeklyProgress completedDates={completedDates} />
           <div className="calendar-stats">
             <div className="stat-item">

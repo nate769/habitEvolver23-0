@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './ProgressTracker.css';
-import { motion, useSpring } from 'framer-motion';
+import { motion, useSpring, useTransform } from 'framer-motion';
 
 function ProgressTracker({ goals }) {
   const [progress, setProgress] = useState(0);
@@ -9,9 +9,19 @@ function ProgressTracker({ goals }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const springProgress = useSpring(0, {
-    stiffness: 60,
-    damping: 15
+    stiffness: 30,
+    damping: 20,
+    mass: 1
   });
+
+  // Use a derived value for width as a percentage string
+  const widthPercent = useTransform(springProgress, value => `${value}%`);
+
+  const progressColor = useTransform(
+    springProgress,
+    [0, 50, 100],
+    ['#e74c3c', '#f1c40f', '#2ecc71']
+  );
 
   useEffect(() => {
     const calculateProgress = () => {
@@ -99,14 +109,11 @@ function ProgressTracker({ goals }) {
       <div className="progress-bar">
         <motion.div 
           className="progress-fill" 
-          style={{ width: springProgress }}
-          initial={{ width: 0 }}
-          animate={{ width: isLoading ? 0 : `${progress}%` }}
-          transition={{ 
-            type: "spring",
-            stiffness: 60,
-            damping: 15 
+          style={{ 
+            width: widthPercent,
+            backgroundColor: progressColor
           }}
+          initial={{ width: 0 }}
         />
       </div>
 

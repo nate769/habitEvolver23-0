@@ -1,0 +1,19 @@
+.community-page-layout {
+  display: flex;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #eaf6ff 100%);
+  border-radius: 30px;
+  box-shadow: 0 10px 40px rgba(52, 152, 219, 0.07);
+  min-height: 80vh;
+}
+
+@media (max-width: 1000px) {
+  .community-page-layout {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+} 

@@ -4,6 +4,7 @@ import './WelcomePage.css';
 import studyImage from '../assets/study.jpg';
 import workoutImage from '../assets/workout.jpg';
 import meditateImage from '../assets/meditate.jpg';
+import QuotesManager from './QuotesManager';
 
 const WelcomePage = () => {
   return (
@@ -13,14 +14,7 @@ const WelcomePage = () => {
       <section className="motivation-section">
         <h2>Why HabitEvolver?</h2>
         <div className="atomic-habits-quotes">
-          <blockquote>
-            "Habits are the compound interest of self-improvement. Getting 1% better every day counts for a lot in the long-run."
-            <footer>- James Clear, Atomic Habits</footer>
-          </blockquote>
-          <blockquote>
-            "You do not rise to the level of your goals. You fall to the level of your systems."
-            <footer>- James Clear, Atomic Habits</footer>
-          </blockquote>
+          <QuotesManager type="daily" />
         </div>
       </section>
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Notes.css';
+import notesIllustration from '../assets/placeholders/image.png';
 
 const Notes = () => {
   const [notes, setNotes] = useState(() => {
@@ -51,7 +52,7 @@ const Notes = () => {
   return (
     <div className="notes-container">
       <h2>Habit Notes</h2>
-      
+      <img src={notesIllustration} alt="Notes Illustration" className="notes-illustration-bg" />
       <form onSubmit={handleAddNote} className="notes-form">
         <div className="category-selector">
           {categories.map(category => (
@@ -65,7 +66,6 @@ const Notes = () => {
             </button>
           ))}
         </div>
-        
         <div className="input-group">
           <textarea
             value={newNote}
@@ -78,26 +78,34 @@ const Notes = () => {
           </button>
         </div>
       </form>
-
-      <div className="notes-list">
-        {notes.map(note => (
-          <div key={note.id} className="note-card">
-            <div className="note-header">
-              <span className="note-category">
-                {note.icon} {categories.find(cat => cat.id === note.category)?.label}
-              </span>
-              <span className="note-date">{formatDate(note.date)}</span>
-            </div>
-            <p className="note-text">{note.text}</p>
-            <button
-              onClick={() => handleDeleteNote(note.id)}
-              className="delete-note-btn"
-              aria-label="Delete note"
-            >
-              ×
-            </button>
+      <div className="notes-list-section">
+        {notes.length === 0 ? (
+          <div className="notes-empty-state">
+            <img src={notesIllustration} alt="No notes yet" className="notes-empty-img" />
+            <p className="notes-empty-text">No notes yet. Start by adding your first note!</p>
           </div>
-        ))}
+        ) : (
+          <div className="notes-list">
+            {notes.map(note => (
+              <div key={note.id} className="note-card">
+                <div className="note-header">
+                  <span className="note-category">
+                    {note.icon} {categories.find(cat => cat.id === note.category)?.label}
+                  </span>
+                  <span className="note-date">{formatDate(note.date)}</span>
+                </div>
+                <p className="note-text">{note.text}</p>
+                <button
+                  onClick={() => handleDeleteNote(note.id)}
+                  className="delete-note-btn"
+                  aria-label="Delete note"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

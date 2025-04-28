@@ -1,0 +1,134 @@
+.friends-sidebar {
+  min-width: 260px;
+  max-width: 320px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 18px rgba(52, 152, 219, 0.08);
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  height: fit-content;
+}
+
+.friends-sidebar h3 {
+  font-size: 1.3rem;
+  color: #2980b9;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.friends-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.friend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  position: relative;
+}
+
+.friend-avatar {
+  width: 32px;
+  height: 32px;
+  background: #3498db;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.friend-name {
+  font-size: 1rem;
+  color: #2c3e50;
+  flex: 1;
+}
+
+.remove-friend-btn {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.remove-friend-btn:hover {
+  background: #ffeaea;
+}
+
+.no-friends {
+  color: #7f8c8d;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.add-friend-section {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.add-friend-section input {
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  border: 1.5px solid #e0e0e0;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.add-friend-section input:focus {
+  border: 1.5px solid #3498db;
+}
+
+.search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.search-user-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f4f8fb;
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.98rem;
+}
+
+.add-friend-btn {
+  background: #2ecc71;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.add-friend-btn:hover {
+  background: #27ae60;
+} 

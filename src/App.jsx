@@ -16,6 +16,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import ThemeToggle from './components/ThemeToggle';
 import UserProfile from './components/UserProfile';
 import Achievements from './components/Achievements';
+import CommunityPage from './components/CommunityPage';
 
 function App({ baseUrl = '/' }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -213,6 +214,7 @@ function App({ baseUrl = '/' }) {
                   </div>
                   <Link to="/calendar" className="nav-link">📅 Calendar</Link>
                   <Link to="/notes" className="nav-link">📝 Notes</Link>
+                  <Link to="/community" className="nav-link">👥 Community</Link>
                   <UserProfile />
                   <button onClick={handleLogout} className="logout-btn">Logout</button>
                 </div>
@@ -298,6 +300,7 @@ function App({ baseUrl = '/' }) {
                 )
               } 
             />
+            <Route path="/community" element={<CommunityPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>

@@ -1,20 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import './UserProfile.css';
 
 function UserProfile() {
   const [isOpen, setIsOpen] = useState(false);
-  const user = {
-    name: 'John Doe',
-    email: 'john@example.com',
-    memberSince: new Date('2024-01-01').toLocaleDateString(),
-    stats: {
-      totalGoals: 42,
-      completedGoals: 28,
-      currentStreak: 7,
-      bestStreak: 14
+  const [user, setUser] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedName, setEditedName] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    if (currentUser) {
+      setUser({
+        name: currentUser.username,
+        email: currentUser.email,
+        memberSince: new Date(currentUser.dateJoined).toLocaleDateString(),
+        stats: {
+          totalGoals: currentUser.goals?.length || 0,
+          completedGoals: currentUser.goals?.filter(goal => goal.completed)?.length || 0,
+          currentStreak: currentUser.streak || 0,
+          bestStreak: currentUser.bestStreak || 0
+        }
+      });
+      setEditedName(currentUser.username);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('currentUser');
+    navigate('/');
+    window.location.reload();
+  };
+
+  const handleSaveProfile = () => {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    if (currentUser) {
+      currentUser.username = editedName;
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      setUser(prev => ({ ...prev, name: editedName }));
+      setIsEditing(false);
     }
   };
+
+  if (!user) return null;
 
   const dropdownVariants = {
     hidden: { 
@@ -99,75 +129,69 @@ function UserProfile() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <h3>{user.name}</h3>
-                <p>{user.email}</p>
-                <p>Member since {user.memberSince}</p>
+                {isEditing ? (
+                  <div className="edit-profile">
+                    <input
+                      type="text"
+                      value={editedName}
+                      onChange={(e) => setEditedName(e.target.value)}
+                      className="profile-edit-input"
+                    />
+                    <div className="edit-buttons">
+                      <button onClick={handleSaveProfile} className="save-btn">Save</button>
+                      <button onClick={() => setIsEditing(false)} className="cancel-btn">Cancel</button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <h3>{user.name}</h3>
+                    <p>{user.email}</p>
+                    <p>Member since {user.memberSince}</p>
+                  </>
+                )}
               </motion.div>
             </div>
 
             <div className="profile-stats">
-              <motion.div 
-                className="stat"
-                custom={0}
-                variants={statVariants}
-                initial="initial"
-                animate="animate"
-              >
-                <span>Total Goals</span>
-                <span>{user.stats.totalGoals}</span>
-              </motion.div>
-              <motion.div 
-                className="stat"
-                custom={1}
-                variants={statVariants}
-                initial="initial"
-                animate="animate"
-              >
-                <span>Completed</span>
-                <span>{user.stats.completedGoals}</span>
-              </motion.div>
-              <motion.div 
-                className="stat"
-                custom={2}
-                variants={statVariants}
-                initial="initial"
-                animate="animate"
-              >
-                <span>Current Streak</span>
-                <motion.span
-                  whileHover={{ scale: 1.1 }}
-                  style={{ color: 'var(--primary)' }}
+              {Object.entries(user.stats).map(([key, value], index) => (
+                <motion.div
+                  key={key}
+                  className="stat"
+                  custom={index}
+                  initial="initial"
+                  animate="animate"
+                  variants={statVariants}
                 >
-                  🔥 {user.stats.currentStreak} days
-                </motion.span>
-              </motion.div>
-              <motion.div 
-                className="stat"
-                custom={3}
-                variants={statVariants}
-                initial="initial"
-                animate="animate"
-              >
-                <span>Best Streak</span>
-                <motion.span
-                  whileHover={{ scale: 1.1 }}
-                  style={{ color: 'var(--primary)' }}
-                >
-                  ⭐ {user.stats.bestStreak} days
-                </motion.span>
-              </motion.div>
+                  <span>{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                  <span>{value}</span>
+                </motion.div>
+              ))}
             </div>
 
-            <motion.button
-              className="profile-settings-btn"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-            >
-              ⚙️ Settings
-            </motion.button>
+            <div className="profile-actions">
+              <motion.button
+                className="profile-edit-btn"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                onClick={() => setIsEditing(true)}
+              >
+                ✏️ Edit Profile
+              </motion.button>
+              <motion.button
+                className="profile-logout-btn"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7 }}
+                onClick={handleLogout}
+              >
+                🚪 Logout
+              </motion.button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
